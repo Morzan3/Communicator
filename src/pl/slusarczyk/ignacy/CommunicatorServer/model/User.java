@@ -8,9 +8,9 @@ import java.util.HashSet;
 
 public class User 
 {
-	String userName;
-	Integer ID;
-	HashSet<Message> messageHistory;
+	private String userName;
+	private Integer ID;
+	private HashSet<Message> messageHistory;
 	
 	
 	public User (String userName)

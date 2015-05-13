@@ -1,11 +1,13 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.model;
 
+import java.util.Calendar;
 import java.util.HashSet;
 
 public class Model
 {
 	HashSet<Room> roomList;
-	
+	Calendar calendar = Calendar.getInstance();
+	java.util.Date now = calendar.getTime();
 	
 	public Model()
 	{
@@ -56,9 +58,10 @@ public class Model
 			{
 				for (User user: room.listOfUsers)
 				{
-					if (nameOfSender.equals(user.userName))
+					if (nameOfSender.equals(user.getUserName()))
 					{
-						user.addMessage(message, null);
+						java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
+						user.addMessage(message,currentTimestamp);
 					}
 				}
 			}
@@ -84,7 +87,7 @@ public class Model
 			{
 				for(User user : room.listOfUsers)
 				{
-					conversation.addAll(user.messageHistory);
+					conversation.addAll(user.getUserMessageHistory());
 				}
 				return conversation;
 			}

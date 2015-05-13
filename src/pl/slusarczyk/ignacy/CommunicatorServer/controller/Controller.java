@@ -1,6 +1,7 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
@@ -10,7 +11,7 @@ import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ApplicationEvent
 import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ButtonCreateNewRoomClickedEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ButtonJoinExistingRoomClickedEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ButtonSendMessageClickedEvent;
-import pl.slusarczyk.ignacy.CommunicatorServer.model.Model;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.connection.*;
 
 public class Controller 
@@ -21,6 +22,7 @@ public class Controller
 	private Model model;
 	/**Mapa strategii obsługi zdarzeń*/
 	private Map<Class<? extends ApplicationEvent>, ApplicationEventStrategy> strategyMap;
+	/**Referencja do Servera*/
 	private Server server;
 	
 	
@@ -122,7 +124,11 @@ public class Controller
 			String roomName = ((ButtonSendMessageClickedEvent) applicationEventObject).getRoomName();
 			String userName = ((ButtonSendMessageClickedEvent) applicationEventObject).getUserName();
 			String message = ((ButtonSendMessageClickedEvent) applicationEventObject).getMessage();
+	
+			
 			model.addMessageOfUser(roomName, userName, message);
+			server.sendMessageToAll(model.createConversationFromRoom(roomName), model.getUsersFromRoom(roomName));
+			
 		}
 	}
 	

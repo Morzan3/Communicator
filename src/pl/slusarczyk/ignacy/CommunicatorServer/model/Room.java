@@ -34,7 +34,7 @@ public class Room
 	{
 		for (User user : listOfUsers)
 		{
-			if(userToDelete.equals(user.userName))
+			if(userToDelete.equals(user.getUserName()))
 			{
 				listOfUsers.remove(user);
 				return;
