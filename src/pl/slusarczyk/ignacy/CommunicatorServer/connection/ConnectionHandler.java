@@ -27,19 +27,22 @@ public class ConnectionHandler extends Thread
 	
 	public void run()
 	{
-
-		try
+		while(true)
 		{
-			Socket userSocket = serverSocket.accept();
-			RequestHandler newConnection = new RequestHandler (userSocket, eventQueue, userOutputStreams);
+			try
+			{
+				System.out.println("Conncetion Handler właczony");
+				Socket userSocket = serverSocket.accept();
+				RequestHandler newConnection = new RequestHandler (userSocket, eventQueue, userOutputStreams);
 			
-			newConnection.start();		
+				newConnection.start();	
+				System.out.println("Zaakceptowano nowe polaczenie");
+			}
+			catch (IOException ex)
+			{
+				System.err.println(ex);
+			}
 		}
-		catch (IOException ex)
-		{
-			System.err.println(ex);
-		}
-		
 	}
 	
 }

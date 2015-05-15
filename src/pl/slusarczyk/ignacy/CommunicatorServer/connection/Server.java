@@ -15,7 +15,7 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
 public class Server 
 {
 	private HashMap <String, ObjectOutputStream> userOutputStreams; //hashmapa potrzeba przy przesyłaniuwiadomości do wszystkich, 
-	private HashMap <String, RequestHandler> userRequestHandlerMap;  //jeszcze nie jestem pewien czy to konieczne 
+	//private HashMap <String, RequestHandler> userRequestHandlerMap;  //jeszcze nie jestem pewien czy to konieczne 
 	private ServerSocket serverSocket;
 	private final int portNumber;
 	private BlockingQueue<ApplicationEvent> eventQueue;
@@ -24,7 +24,7 @@ public class Server
 	public Server (int portNumber, BlockingQueue<ApplicationEvent> eventQueue)
 	{
 		this.eventQueue = eventQueue;
-		this.portNumber = portNumber;
+		this.portNumber = 5000;
 		this.userOutputStreams = new HashMap <String, ObjectOutputStream>();
 		this.calendar = Calendar.getInstance();
 		
@@ -80,11 +80,11 @@ public class Server
 	
 	
 	
-	public void sendDirectMessage (String userName, HashSet<Message> usersConversation )
+	public void sendDirectMessage (String userName, HashSet<Message> usersConversation, HashSet<User> listOfUsers )
 	{
 		try
 		{
-		UserConversation userConversationToSend = new UserConversation (usersConversation);
+		UserConversation userConversationToSend = new UserConversation (usersConversation,listOfUsers);
 		ObjectOutputStream userOutputStream;
 		userOutputStream = userOutputStreams.get(userName);
 		userOutputStream.writeObject(userConversationToSend);
@@ -99,10 +99,15 @@ public class Server
 	{
 		for (User user : usersToSendTo)
 		{
-			sendDirectMessage(user.getUserName(), userConversation);
+			sendDirectMessage(user.getUserName(), userConversation, usersToSendTo);
 		}
 	}
 	
+	
+	public static void main (String args[])
+	{
+		Server server = new Server(0,null);
+	}
 	
 	
 }

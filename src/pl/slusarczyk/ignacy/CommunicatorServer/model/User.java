@@ -1,7 +1,7 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.model;
 
 
-import java.sql.Timestamp;
+
 import java.util.HashSet;
 
 
@@ -9,7 +9,7 @@ import java.util.HashSet;
 public class User 
 {
 	private String userName;
-	private Integer ID;
+	//private Integer ID;
 	private HashSet<Message> messageHistory;
 	
 	
@@ -30,7 +30,7 @@ public class User
 		return this.messageHistory;
 	}
 	
-	public void addMessage (String textMessage, Timestamp timestamp)
+	public void addMessage (String textMessage, java.sql.Date timestamp)
 	{
 		Message message = new Message(textMessage,timestamp);
 		messageHistory.add(message);

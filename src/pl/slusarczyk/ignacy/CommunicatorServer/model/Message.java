@@ -1,6 +1,5 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.model;
 
-import java.sql.Timestamp;
 
 
 
@@ -13,11 +12,11 @@ import java.sql.Timestamp;
 public class Message 
 {
 	String message;
-	Timestamp createdOn;
+	java.sql.Date createdOn;
 
 
 	
-	public Message (String message,Timestamp timestamp)
+	public Message (String message,java.sql.Date timestamp)
 	{
 		this.message = message;
 		this.createdOn = timestamp;
@@ -29,9 +28,15 @@ public class Message
 		return this.message;
 	}
 	
-	public Timestamp getCreateDate ()
+	public java.sql.Date getCreateDate ()
 	{
 		return this.createdOn;
 	}
+	
+	public void seTTimestamp (java.sql.Date currentTime)
+	{
+		this.createdOn = currentTime;
+	}
+	
 	
 }

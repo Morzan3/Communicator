@@ -60,7 +60,7 @@ public class Model
 				{
 					if (nameOfSender.equals(user.getUserName()))
 					{
-						java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
+						java.sql.Date currentTimestamp = new java.sql.Date(now.getTime());
 						user.addMessage(message,currentTimestamp);
 					}
 				}
