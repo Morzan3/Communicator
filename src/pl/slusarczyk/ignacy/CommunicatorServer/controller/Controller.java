@@ -1,16 +1,21 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
-
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 
 
-import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ApplicationEvent;
-import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ButtonCreateNewRoomClickedEvent;
-import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ButtonJoinExistingRoomClickedEvent;
-import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ButtonSendMessageClickedEvent;
+
+
+
+
+
+
+import com.sun.security.ntlm.Client;
+
+import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.connection.*;
 
@@ -26,19 +31,19 @@ public class Controller
 	private Server server;
 	
 	
-	public Controller(final BlockingQueue<ApplicationEvent> eventQueue, final Model model)
+	public Controller(final BlockingQueue<ApplicationEvent>  eventQueue2, final Model model, final Server server)
 	{
-		this.eventQueue = eventQueue;
+		this.eventQueue = eventQueue2;
 		this.model = model;
+		this.server = server;
 		
 		//Tworzenie mapy strategii obsługi zdarzeń
 		strategyMap = new HashMap<Class<? extends ApplicationEvent>, ApplicationEventStrategy>();
 		strategyMap.put(ButtonCreateNewRoomClickedEvent.class, new ButtonCreateNewRoomClickedEventStrategy());
 		strategyMap.put(ButtonJoinExistingRoomClickedEvent.class, new ButtonJoinExistingRoomClickedEventStrategy());
 		strategyMap.put(ButtonSendMessageClickedEvent.class, new ButtonSendMessageClickedEventStrategy());
-		//strategyMap.put(ButtonRemoveChannelClickedEvent.class, new ButtonRemoveChannelClickedEventStrategy());
-		//strategyMap.put(ChannelClickedEvent.class, new ChannelClickedEventStrategy());
-		//strategyMap.put(ArticleWasOpenedEvent.class, new ArticleWasOpenedEventStrategy());
+		strategyMap.put(UserName.class, new UserNameStrategy());
+
 		
 	}
 		
@@ -95,6 +100,7 @@ public class Controller
 			{
 				String roomName = ((ButtonCreateNewRoomClickedEvent) applicationEventObject).getRoomName();
 				String firstUserName = ((ButtonCreateNewRoomClickedEvent) applicationEventObject).getUserName();
+				System.out.println("Create new room " + roomName  );
 				model.createNewRoom(roomName, firstUserName);
 			
 			}
@@ -116,20 +122,43 @@ public class Controller
 				model.addUserToSpecificRoom(roomName, newUserName);
 			}
 		
-	}
-	
-	class ButtonSendMessageClickedEventStrategy extends ApplicationEventStrategy
-	{
-		void execute(final ApplicationEvent applicationEventObject)
-		{
-			String roomName = ((ButtonSendMessageClickedEvent) applicationEventObject).getRoomName();
-			String userName = ((ButtonSendMessageClickedEvent) applicationEventObject).getUserName();
-			String message = ((ButtonSendMessageClickedEvent) applicationEventObject).getMessage();
-			model.addMessageOfUser(roomName, userName, message);
-			server.sendMessageToAll(model.createConversationFromRoom(roomName), model.getUsersFromRoom(roomName));
-			
 		}
-	}
+	
+		class ButtonSendMessageClickedEventStrategy extends ApplicationEventStrategy
+		{
+			void execute(final ApplicationEvent applicationEventObject)
+			{
+				
+				String roomName = ((ButtonSendMessageClickedEvent) applicationEventObject).getRoomName();
+				String userName = ((ButtonSendMessageClickedEvent) applicationEventObject).getUserName();
+				String message = ((ButtonSendMessageClickedEvent) applicationEventObject).getMessage();
+				model.addMessageOfUser(roomName, userName, message);
+	
+				String userList = model.getUsersFromRoom(roomName);
+				String conversationToSend = model.createConversationFromRoom(roomName);
+		
+				
+				server.sendDirectMessage(userName,conversationToSend, userList);
+			//	server.sendMessageToAll(model.createConversationFromRoom("test"), model.getUsersFromRoom("test"));
+				
+			}
+		}
+	
+		class UserNameStrategy extends ApplicationEventStrategy
+		{
+			void execute(final ApplicationEvent applicationEventObject)
+			{
+				
+				System.out.println("Coś sie jebie");
+					String userName = ((UserName) applicationEventObject).getUserName();
+					String roomName = ((UserName) applicationEventObject).getRoomName();
+					System.out.println(userName);
+					//model.addUserToSpecificRoom(roomName, userName);
+				
+				
+			}
+		}
+	
 	
 	
 }

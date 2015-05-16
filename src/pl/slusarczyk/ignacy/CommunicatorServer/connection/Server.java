@@ -9,12 +9,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 
-import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.*;
-import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
+import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.ApplicationEvent;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.User;
+import pl.slusarczyk.ignacy.CommunicatorServer.serverevent.ConversationInformation;
 
 public class Server 
 {
-	private HashMap <String, ObjectOutputStream> userOutputStreams; //hashmapa potrzeba przy przesyłaniuwiadomości do wszystkich, 
+	public HashMap <String, ObjectOutputStream> userOutputStreams; //hashmapa potrzeba przy przesyłaniuwiadomości do wszystkich, 
 	//private HashMap <String, RequestHandler> userRequestHandlerMap;  //jeszcze nie jestem pewien czy to konieczne 
 	private ServerSocket serverSocket;
 	private final int portNumber;
@@ -33,7 +34,7 @@ public class Server
 		
 		ConnectionHandler connectionHandler = new ConnectionHandler(this.serverSocket, this.eventQueue, this.userOutputStreams);
 		connectionHandler.start();
-		
+	
 	}
 	
 	
@@ -69,7 +70,6 @@ public class Server
 		{
 			Socket userSocket = serverSocket.accept();
 			RequestHandler newConnection = new RequestHandler (userSocket, eventQueue, userOutputStreams);
-			
 			newConnection.start();
 		}
 		catch (IOException ex)
@@ -80,11 +80,11 @@ public class Server
 	
 	
 	
-	public void sendDirectMessage (String userName, HashSet<Message> usersConversation, HashSet<User> listOfUsers )
+	public void sendDirectMessage (String userName, String usersConversation,String listOfUsers )
 	{
 		try
 		{
-		UserConversation userConversationToSend = new UserConversation (usersConversation,listOfUsers);
+		ConversationInformation userConversationToSend = new ConversationInformation (usersConversation,listOfUsers);
 		ObjectOutputStream userOutputStream;
 		userOutputStream = userOutputStreams.get(userName);
 		userOutputStream.writeObject(userConversationToSend);
@@ -95,19 +95,17 @@ public class Server
 		}
 	}
 	
-	public void sendMessageToAll (HashSet<Message> userConversation, HashSet<User> usersToSendTo)
+	public void sendMessageToAll (String userConversation,String userListToDisplay, HashSet<User> usersToSendTo)
 	{
 		for (User user : usersToSendTo)
 		{
-			sendDirectMessage(user.getUserName(), userConversation, usersToSendTo);
+		
+			sendDirectMessage(user.getUserName(), userConversation, userListToDisplay);
 		}
 	}
 	
 	
-	public static void main (String args[])
-	{
-		Server server = new Server(0,null);
-	}
+
 	
 	
 }

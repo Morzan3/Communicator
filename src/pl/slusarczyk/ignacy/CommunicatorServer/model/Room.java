@@ -24,6 +24,7 @@ public class Room
 	
 	public void addUser (String userName)
 	{
+		System.out.println("Dodaje uzytkownika do konkretnego pokoju ");
 		User newUser = new User (userName);
 		listOfUsers.add(newUser);
 	}

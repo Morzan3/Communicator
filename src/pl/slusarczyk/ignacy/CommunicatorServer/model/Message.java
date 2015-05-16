@@ -1,5 +1,8 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.model;
 
+import java.io.Serializable;
+import java.util.Date;
+
 
 
 
@@ -9,14 +12,18 @@ package pl.slusarczyk.ignacy.CommunicatorServer.model;
  *
  */
 
-public class Message 
+public class Message implements Comparable<Message>,  Serializable
 {
-	String message;
-	java.sql.Date createdOn;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String message;
+	private Date createdOn;
 
 
 	
-	public Message (String message,java.sql.Date timestamp)
+	public Message (String message,Date timestamp)
 	{
 		this.message = message;
 		this.createdOn = timestamp;
@@ -28,15 +35,19 @@ public class Message
 		return this.message;
 	}
 	
-	public java.sql.Date getCreateDate ()
+	public Date getDate ()
 	{
 		return this.createdOn;
 	}
 	
-	public void seTTimestamp (java.sql.Date currentTime)
+	public void setDate (Date currentTime)
 	{
 		this.createdOn = currentTime;
 	}
 	
+	  public int compareTo(Message o) 
+	  {
+	    return getDate().compareTo(o.getDate());
+	  }
 	
 }

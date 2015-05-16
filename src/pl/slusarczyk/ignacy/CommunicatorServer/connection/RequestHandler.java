@@ -9,15 +9,19 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
-import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ApplicationEvent;
+import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.ApplicationEvent;
+import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.ButtonCreateNewRoomClickedEvent;
+import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.UserName;
+
 
 public class RequestHandler extends Thread
 {
-	@SuppressWarnings("unused")
+	
 	private Socket userSocket;
 	private ObjectInputStream inputStream;
+	
 	private ObjectOutputStream outputStream;
-	@SuppressWarnings("unused")
+
 	private HashMap<String,ObjectOutputStream> userOutputStreams;
 	private BlockingQueue<ApplicationEvent> eventQueue;
 	
@@ -27,28 +31,18 @@ public class RequestHandler extends Thread
 		this.eventQueue = eventQueue;
 		this.userOutputStreams = userOutputStreams;
 		
-		
-		
 		try
 		{
 			outputStream = new ObjectOutputStream(userSocket.getOutputStream());
 			inputStream = new ObjectInputStream(userSocket.getInputStream());
-			String newUserName; 
-			
-			newUserName = (String) inputStream.readObject();
-			System.out.println(newUserName);
-			userOutputStreams.put(newUserName, outputStream);
-			//Dodaje nowego użytkownika do mojej mapy. 
+		
 		}
 		catch (IOException ex)
 		{
-			System.err.println("Nastapił błąd podczas tworzenia strumienia " + ex);
+			System.err.println("Nastapił błąd podczas tworzenia strumienia serwer " + ex);
 			return;
 		}
-		catch (ClassNotFoundException ex2)
-		{
-			System.err.println("Błąd rzutowania przychodzącej informacji" + ex2);
-		}
+		
 		
 		
 	
@@ -56,13 +50,23 @@ public class RequestHandler extends Thread
 	
 		public void run()
 		{
-			
+			ApplicationEvent appEvent;
+			System.out.println("Serwer oczekuje na eventy od klienta.");
 			while(true)
 			{	
 				try
 				{
-					ApplicationEvent appEvent;
+					
 					appEvent = (ApplicationEvent) inputStream.readObject();
+					
+					if (appEvent instanceof UserName) 
+					{
+						String nazwa = ((UserName) appEvent).getUserName();
+						userOutputStreams.put(nazwa,outputStream);
+						System.out.println("Dodano uzytkownika do listy output streamów");
+					}
+					
+					System.out.println("Request handler obiekt" + appEvent);
 					eventQueue.add(appEvent);
 				}
 				catch (IOException ex)
@@ -71,7 +75,11 @@ public class RequestHandler extends Thread
 				}
 				catch (ClassNotFoundException ex)
 				{
-					System.err.println("Błąd rzutowania przychodzącej informacji bo string" + ex);
+					System.err.println(" Req Błąd rzutowania przychodzącej informacji" + ex);
+				}
+				catch (NullPointerException ex3)
+				{
+					System.err.println("Błąd odbierania obiektu");
 				}
 			}
 		}

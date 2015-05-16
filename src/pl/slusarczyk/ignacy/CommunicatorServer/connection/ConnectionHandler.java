@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
-import pl.slusarczyk.ignacy.CommunicatorServer.applicationevent.ApplicationEvent;
+import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.*;
 
 public class ConnectionHandler extends Thread
 {

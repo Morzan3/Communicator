@@ -1,6 +1,8 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.model;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 
 public class Model
@@ -18,7 +20,9 @@ public class Model
 	public void createNewRoom(String roomName, String nameOfFirstUser)
 	{
 		Room room = new Room(roomName,nameOfFirstUser);
+		
 		roomList.add(room);
+		System.out.println("Lista uzytkownikow model" + room.listOfUsers);
 		return;
 	}
 	
@@ -37,6 +41,7 @@ public class Model
 	
 	public void addUserToSpecificRoom (String roomName, String userToAddName)
 	{
+		
 		for (Room room : roomList)
 		{
 			if (roomName.equals(room.roomName))
@@ -60,8 +65,8 @@ public class Model
 				{
 					if (nameOfSender.equals(user.getUserName()))
 					{
-						java.sql.Date currentTimestamp = new java.sql.Date(now.getTime());
-						user.addMessage(message,currentTimestamp);
+						
+						user.addMessage(message,Calendar.getInstance().getTime());
 					}
 				}
 			}
@@ -69,19 +74,29 @@ public class Model
 	}
 	
 	
-	public HashSet<User> getUsersFromRoom (String roomName)
+	public String getUsersFromRoom (String roomName)
 	{
+		String userList = new String("");
+		
 		for (Room room : roomList)
+		{
 			if (roomName.equals(room.roomName))
 			{
-				return room.listOfUsers;
+				for(User user: room.listOfUsers)
+				{
+					userList = user.getUserName() + "\n";
+				}
+				return userList;
 			}
-		return null;
+		
+		}
+		return null;	
 	}
 	
-	public HashSet<Message> createConversationFromRoom (String roomName)
+	public String createConversationFromRoom (String roomName)
 	{
-		HashSet<Message> conversation = new HashSet<Message>();;
+		HashSet<Message> conversation = new HashSet<Message>();
+		String sortedConversation = new String("");
 		for (Room room : roomList)
 			if (roomName.equals(room.roomName))
 			{
@@ -89,10 +104,18 @@ public class Model
 				{
 					conversation.addAll(user.getUserMessageHistory());
 				}
-				return conversation;
+				
+				ArrayList<Message> listOfConversations = new ArrayList<Message>();
+				listOfConversations.addAll(conversation);
+				Collections.sort(listOfConversations);
+				
+				for(Message message :listOfConversations)
+				{
+					sortedConversation = sortedConversation + message.getMessage();
+				}
+				
+				return sortedConversation;
 			}
 		return null;
 	}
-	
-	
 }
