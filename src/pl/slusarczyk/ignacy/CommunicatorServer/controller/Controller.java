@@ -13,10 +13,12 @@ import java.util.concurrent.BlockingQueue;
 
 
 
+
 import com.sun.security.ntlm.Client;
 
 import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
+import pl.slusarczyk.ignacy.CommunicatorServer.serverevent.ConnectionEstablished;
 import pl.slusarczyk.ignacy.CommunicatorServer.connection.*;
 
 public class Controller 
@@ -98,11 +100,19 @@ public class Controller
 		{
 			void execute(final ApplicationEvent applicationEventObject)
 			{
+				try
+				{
 				String roomName = ((ButtonCreateNewRoomClickedEvent) applicationEventObject).getRoomName();
 				String firstUserName = ((ButtonCreateNewRoomClickedEvent) applicationEventObject).getUserName();
 				System.out.println("Create new room " + roomName  );
 				model.createNewRoom(roomName, firstUserName);
-			
+				
+				server.userOutputStreams.get(firstUserName).writeObject(new ConnectionEstablished(true));
+				}
+				catch(IOException ex)
+				{
+					System.err.println(ex);
+				}
 			}
 		}
 		
@@ -136,7 +146,7 @@ public class Controller
 	
 				String userList = model.getUsersFromRoom(roomName);
 				String conversationToSend = model.createConversationFromRoom(roomName);
-		
+				System.out.println( userList + conversationToSend);
 				
 				server.sendDirectMessage(userName,conversationToSend, userList);
 			//	server.sendMessageToAll(model.createConversationFromRoom("test"), model.getUsersFromRoom("test"));
@@ -149,7 +159,6 @@ public class Controller
 			void execute(final ApplicationEvent applicationEventObject)
 			{
 				
-				System.out.println("Coś sie jebie");
 					String userName = ((UserName) applicationEventObject).getUserName();
 					String roomName = ((UserName) applicationEventObject).getRoomName();
 					System.out.println(userName);

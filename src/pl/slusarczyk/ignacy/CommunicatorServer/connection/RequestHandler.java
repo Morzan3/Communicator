@@ -59,11 +59,15 @@ public class RequestHandler extends Thread
 					
 					appEvent = (ApplicationEvent) inputStream.readObject();
 					
-					if (appEvent instanceof UserName) 
+					if (appEvent instanceof ButtonCreateNewRoomClickedEvent) 
 					{
-						String nazwa = ((UserName) appEvent).getUserName();
+						String nazwa = ((ButtonCreateNewRoomClickedEvent) appEvent).getUserName();
 						userOutputStreams.put(nazwa,outputStream);
 						System.out.println("Dodano uzytkownika do listy output streamów");
+					}
+					else
+					{
+						System.out.println("Nie dodano raaaaz");
 					}
 					
 					System.out.println("Request handler obiekt" + appEvent);

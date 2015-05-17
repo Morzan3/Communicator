@@ -11,9 +11,9 @@ public class ButtonCreateNewRoomClickedEvent extends ApplicationEvent implements
 	private String roomName;
 	private String firstUserName;
 	private String hostName;
-	private String portNumber;
+	private int portNumber;
 	
-	public ButtonCreateNewRoomClickedEvent(String roomName, String firstUserName, String hostName, String portNumber)
+	public ButtonCreateNewRoomClickedEvent(String roomName, String firstUserName, String hostName, int portNumber)
 	{
 		this.roomName = roomName;
 		this.firstUserName = firstUserName;
@@ -47,7 +47,7 @@ public class ButtonCreateNewRoomClickedEvent extends ApplicationEvent implements
 	/**
 	 * @return the portNumber
 	 */
-	public String getPortNumber() 
+	public int getPortNumber() 
 	{
 		return portNumber;
 	}
