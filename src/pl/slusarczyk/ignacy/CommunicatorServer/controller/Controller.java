@@ -5,22 +5,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-
-
-
-
-
-
-
-
-
-import com.sun.security.ntlm.Client;
-
 import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.serverevent.ConnectionEstablished;
 import pl.slusarczyk.ignacy.CommunicatorServer.connection.*;
 
+/**
+ * Klasa kontrolera odpowiadajaca za odpowiednią komunikację pomiędzy klientem a serwerem, zawierająca w sobie klasy
+ * odpowiadające strategiom obsługi zdarzeń pochodzących od klienta
+ * 
+ * @author Ignacy Ślusarczyk
+ */
 public class Controller 
 {
 	/**Kolejka blokująca do przesyłania zdarzeń pomiędzy widokiem a kontrolerem*/
@@ -32,10 +27,15 @@ public class Controller
 	/**Referencja do Servera*/
 	private Server server;
 	
-	
-	public Controller(final BlockingQueue<ApplicationEvent>  eventQueue2, final Model model, final Server server)
+	/**
+	 * Konstruktor tworzący controler na podstawie zadanych parametrów
+	 * @param eventQueue kolejka blokująca
+	 * @param model model
+	 * @param server serwer
+	 */
+	public Controller(final BlockingQueue<ApplicationEvent>  eventQueue, final Model model, final Server server)
 	{
-		this.eventQueue = eventQueue2;
+		this.eventQueue = eventQueue;
 		this.model = model;
 		this.server = server;
 		
@@ -43,18 +43,13 @@ public class Controller
 		strategyMap = new HashMap<Class<? extends ApplicationEvent>, ApplicationEventStrategy>();
 		strategyMap.put(ButtonCreateNewRoomClickedEvent.class, new ButtonCreateNewRoomClickedEventStrategy());
 		strategyMap.put(ButtonJoinExistingRoomClickedEvent.class, new ButtonJoinExistingRoomClickedEventStrategy());
-		strategyMap.put(ButtonSendMessageClickedEvent.class, new ButtonSendMessageClickedEventStrategy());
-		strategyMap.put(UserName.class, new UserNameStrategy());
-
-		
+		strategyMap.put(ButtonSendMessageClickedEvent.class, new ButtonSendMessageClickedEventStrategy());	
+		strategyMap.put(CloseMainWindowClickedEvent.class, new CloseMainWindowEventStrategy());
 	}
-		
-	
+			
 		/**
 		 * Główna metoda kontrolera, czeka on w niej na zdarzenia, a następnie odpowiednio je obsługuje.
 		 */
-	
-	
 		public void work()
 		{
 			while (true)
@@ -72,8 +67,6 @@ public class Controller
 			}
 		}
 		
-		
-		
 		/**
 		 * Abstrakcyjna klasa bazowa dla klas strategii obsługujących zdarzenia.
 		 * 
@@ -90,12 +83,11 @@ public class Controller
 
 		}
 		
-		/**Klasa wewnętrzna opisująca strategię obsługi kliknięcia przez użytkownika przycisku utworzenia nowego pokoju
-		 * 
-		 * @author Ignacy Ślusarczyk
+		/**
+		 * Klasa wewnętrzna opisująca strategię obsługi kliknięcia przez użytkownika przycisku utworzenia nowego pokoju
 		 *
+		 * @author Ignacy Ślusarczyk
 		 */
-		
 		class ButtonCreateNewRoomClickedEventStrategy extends ApplicationEventStrategy
 		{
 			void execute(final ApplicationEvent applicationEventObject)
@@ -104,9 +96,8 @@ public class Controller
 				{
 				String roomName = ((ButtonCreateNewRoomClickedEvent) applicationEventObject).getRoomName();
 				String firstUserName = ((ButtonCreateNewRoomClickedEvent) applicationEventObject).getUserName();
-				System.out.println("Create new room " + roomName  );
-				model.createNewRoom(roomName, firstUserName);
 				
+				model.createNewRoom(roomName, firstUserName);
 				server.userOutputStreams.get(firstUserName).writeObject(new ConnectionEstablished(true));
 				}
 				catch(IOException ex)
@@ -117,23 +108,35 @@ public class Controller
 		}
 		
 		
-		/**Klasa wewnętrzna opisująca strategię obsługi kliknięcia przez użytkownika przycisku utworzenia dołączenia do już istniejącego pokoju
-		 * 
-		 * @author Ignacy Ślusarczyk
+		/**
+		 * Klasa wewnętrzna opisująca strategię obsługi kliknięcia przez użytkownika przycisku dołączenia do już istniejącego pokoju
 		 *
+		 * @author Ignacy Ślusarczyk
 		 */
-		
 		class ButtonJoinExistingRoomClickedEventStrategy extends ApplicationEventStrategy
 		{
 			void execute(final ApplicationEvent applicationEventObject)
 			{
+				try
+				{
 				String roomName = ((ButtonJoinExistingRoomClickedEvent) applicationEventObject).getRoomName();
 				String newUserName = ((ButtonJoinExistingRoomClickedEvent) applicationEventObject).getUserName();
 				model.addUserToSpecificRoom(roomName, newUserName);
+				
+				server.userOutputStreams.get(newUserName).writeObject(new ConnectionEstablished(true));
+				}
+				catch(IOException ex)
+				{
+					System.err.println(ex);
+				}
 			}
-		
 		}
 	
+		/**
+		 * Klasa wewnętrzna opisująca strategię obsługi kliknięcia przez użytkownika przycisku dołączenia do już istniejącego pokoju
+		 * 
+		 * @author Ignacy Ślusarczyk
+		 */
 		class ButtonSendMessageClickedEventStrategy extends ApplicationEventStrategy
 		{
 			void execute(final ApplicationEvent applicationEventObject)
@@ -143,31 +146,26 @@ public class Controller
 				String userName = ((ButtonSendMessageClickedEvent) applicationEventObject).getUserName();
 				String message = ((ButtonSendMessageClickedEvent) applicationEventObject).getMessage();
 				model.addMessageOfUser(roomName, userName, message);
-	
-				String userList = model.getUsersFromRoom(roomName);
-				String conversationToSend = model.createConversationFromRoom(roomName);
-				System.out.println( userList + conversationToSend);
-				
-				server.sendDirectMessage(userName,conversationToSend, userList);
-			//	server.sendMessageToAll(model.createConversationFromRoom("test"), model.getUsersFromRoom("test"));
-				
+				server.sendMessageToAll(model.createConversationFromRoom(roomName),model.getUsersFromRoom(roomName), model.getUsersSetFromRoom(roomName));	
 			}
 		}
-	
-		class UserNameStrategy extends ApplicationEventStrategy
+		
+		class CloseMainWindowEventStrategy extends ApplicationEventStrategy
 		{
-			void execute(final ApplicationEvent applicationEventObject)
+
+			@Override
+			void execute(ApplicationEvent applicationEventObject) 
 			{
+				String roomName = ((CloseMainWindowClickedEvent) applicationEventObject).getRoomName();
+				String userName = ((CloseMainWindowClickedEvent) applicationEventObject).getUserName();
 				
-					String userName = ((UserName) applicationEventObject).getUserName();
-					String roomName = ((UserName) applicationEventObject).getRoomName();
-					System.out.println(userName);
-					//model.addUserToSpecificRoom(roomName, userName);
-				
-				
+				int  shouldClose =model.deleteUserFromSpecificRoom(roomName, userName);
+				if(shouldClose ==1)
+				{
+					server.closeServer();
+					System.exit(0);
+				}
 			}
+			
 		}
-	
-	
-	
 }

@@ -1,30 +1,37 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.connection;
 
-
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
+import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.*;
 
-import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.ApplicationEvent;
-import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.ButtonCreateNewRoomClickedEvent;
-import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.UserName;
-
-
+/** Klasa odpowiedzialna za odbieranie zdarzeń od klienta i dodawanie ich do blocking queue 
+ * 
+ * @author Ignacy Ślusatczyk
+ */
 public class RequestHandler extends Thread
 {
-	
+	/**Socket klienta**/
 	private Socket userSocket;
+	/**Strumień wejściowy**/
 	private ObjectInputStream inputStream;
-	
+	/**Strumień wyjściowy**/
 	private ObjectOutputStream outputStream;
-
+	/**Mapa nazw użytkowników oraz ich strumieni wyjściowych**/
 	private HashMap<String,ObjectOutputStream> userOutputStreams;
+	/**Kolejka blokująca zdarzeń**/
 	private BlockingQueue<ApplicationEvent> eventQueue;
 	
+	/**
+	 * Konstruktor tworzący nowy wątek nasłuchujący połączeń od danego użytkownika
+	 * 
+	 * @param userSocket socket użytkownika
+	 * @param eventQueue kolejka zdarzeń
+	 * @param userOutputStreams mapa strumieni wyjściowych
+	 */
 	public RequestHandler (Socket userSocket, BlockingQueue<ApplicationEvent> eventQueue,HashMap <String,ObjectOutputStream> userOutputStreams)
 	{
 		this.userSocket = userSocket;
@@ -35,19 +42,17 @@ public class RequestHandler extends Thread
 		{
 			outputStream = new ObjectOutputStream(userSocket.getOutputStream());
 			inputStream = new ObjectInputStream(userSocket.getInputStream());
-		
 		}
 		catch (IOException ex)
 		{
-			System.err.println("Nastapił błąd podczas tworzenia strumienia serwer " + ex);
+			System.err.println("Nastapił błąd podczas tworzenia strumienia z klientem" + ex);
 			return;
 		}
-		
-		
-		
-	
 	}
 	
+	/**
+	 * Główna pętla klasy, w której nasłuchuje zdarzeń od klienta i dodaje je do kolejki blokującej
+	 */
 		public void run()
 		{
 			ApplicationEvent appEvent;
@@ -59,19 +64,21 @@ public class RequestHandler extends Thread
 					
 					appEvent = (ApplicationEvent) inputStream.readObject();
 					
-					if (appEvent instanceof ButtonCreateNewRoomClickedEvent) 
+					if (appEvent instanceof UserName) 
 					{
-						String nazwa = ((ButtonCreateNewRoomClickedEvent) appEvent).getUserName();
+						String nazwa = ((UserName) appEvent).getUserName();
 						userOutputStreams.put(nazwa,outputStream);
-						System.out.println("Dodano uzytkownika do listy output streamów");
 					}
-					else
+					else if(appEvent instanceof CloseMainWindowClickedEvent)
 					{
-						System.out.println("Nie dodano raaaaz");
+						this.userSocket.close();
+						break;
+					}
+					else 
+					{
+						eventQueue.add(appEvent);
 					}
 					
-					System.out.println("Request handler obiekt" + appEvent);
-					eventQueue.add(appEvent);
 				}
 				catch (IOException ex)
 				{
@@ -79,7 +86,7 @@ public class RequestHandler extends Thread
 				}
 				catch (ClassNotFoundException ex)
 				{
-					System.err.println(" Req Błąd rzutowania przychodzącej informacji" + ex);
+					System.err.println("Błąd rzutowania przychodzącej informacji" + ex);
 				}
 				catch (NullPointerException ex3)
 				{
@@ -87,5 +94,4 @@ public class RequestHandler extends Thread
 				}
 			}
 		}
-		
 }
