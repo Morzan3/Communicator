@@ -1,5 +1,6 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /** 
@@ -7,8 +8,12 @@ import java.util.HashSet;
  *
  * @author Ignacy Ślusarczyk
  */
-public class Room
+class Room implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**Nazwa danego pokoju chatu**/
 	private String roomName;
 	/**Lista obiektów klasy User**/
@@ -19,11 +24,11 @@ public class Room
 	 * @param roomName Nazwa pokoju
 	 * @param firstUserName Nazwa użytkownika zakładającego pokój
 	 */
-	public Room (String roomName, String firstUserName)
+	public Room (final String roomName,final UserId userId)
 	{
 		this.roomName = roomName;
 		listOfUsers = new HashSet<User>();
-		User firstUser = new User(firstUserName);
+		User firstUser = new User(userId);
 		listOfUsers.add(firstUser);
 	}
 	
@@ -34,7 +39,7 @@ public class Room
 	 */
 	public HashSet<User> getUserList()
 	{
-		return this.listOfUsers;
+		return listOfUsers;
 	}
 	
 	/**
@@ -51,10 +56,10 @@ public class Room
 	 * 
 	 * @param userName Nazwa użytkownika którego dodajemy
 	 */
-	public void addUser (String userName)
+	public void addUser (final UserId userId)
 	{
 		System.out.println("Dodaje uzytkownika do konkretnego pokoju ");
-		User newUser = new User (userName);
+		User newUser = new User (userId);
 		listOfUsers.add(newUser);
 	}
 	
@@ -62,11 +67,11 @@ public class Room
 	 * 
 	 * @param userToDelete Nazwa użytkownika, którego chcemy usunąć 
 	 */
-	public void deleteUserByName (String userToDelete)
+	public void deleteUserByName (final UserId userToDelete)
 	{
 		for (User user : listOfUsers)
 		{
-			if(userToDelete.equals(user.getUserName()))
+			if(userToDelete.hashCode() == user.getUserID().hashCode())
 			{
 				listOfUsers.remove(user);
 				return;

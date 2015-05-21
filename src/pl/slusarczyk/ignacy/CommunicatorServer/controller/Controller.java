@@ -1,13 +1,12 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.controller;
 
-import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import pl.slusarczyk.ignacy.CommunicatorClient.applicationevent.*;
+import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
-import pl.slusarczyk.ignacy.CommunicatorServer.serverevent.ConnectionEstablished;
 import pl.slusarczyk.ignacy.CommunicatorServer.connection.*;
 
 /**
@@ -19,32 +18,31 @@ import pl.slusarczyk.ignacy.CommunicatorServer.connection.*;
 public class Controller 
 {
 	/**Kolejka blokująca do przesyłania zdarzeń pomiędzy widokiem a kontrolerem*/
-	private BlockingQueue<ApplicationEvent> eventQueue;
+	private final BlockingQueue<ServerHandeledEvent> eventQueue;
 	/**Referencja do modelu*/
-	private Model model;
+	private final Model model;
 	/**Mapa strategii obsługi zdarzeń*/
-	private Map<Class<? extends ApplicationEvent>, ApplicationEventStrategy> strategyMap;
+	private final Map<Class<? extends ServerHandeledEvent>, clientEventStrategy> strategyMap;
 	/**Referencja do Servera*/
-	private Server server;
+	private final MainConnectionHandler mainConnectionHandler;
 	
 	/**
 	 * Konstruktor tworzący controler na podstawie zadanych parametrów
 	 * @param eventQueue kolejka blokująca
 	 * @param model model
-	 * @param server serwer
+	 * @param mainConnectionHandler serwer
 	 */
-	public Controller(final BlockingQueue<ApplicationEvent>  eventQueue, final Model model, final Server server)
+	public Controller(final BlockingQueue<ServerHandeledEvent>  eventQueue, final Model model, final MainConnectionHandler mainConnectionHandler)
 	{
 		this.eventQueue = eventQueue;
 		this.model = model;
-		this.server = server;
+		this.mainConnectionHandler = mainConnectionHandler;
 		
 		//Tworzenie mapy strategii obsługi zdarzeń
-		strategyMap = new HashMap<Class<? extends ApplicationEvent>, ApplicationEventStrategy>();
-		strategyMap.put(ButtonCreateNewRoomClickedEvent.class, new ButtonCreateNewRoomClickedEventStrategy());
-		strategyMap.put(ButtonJoinExistingRoomClickedEvent.class, new ButtonJoinExistingRoomClickedEventStrategy());
-		strategyMap.put(ButtonSendMessageClickedEvent.class, new ButtonSendMessageClickedEventStrategy());	
-		strategyMap.put(CloseMainWindowClickedEvent.class, new CloseMainWindowEventStrategy());
+		strategyMap = new HashMap<Class<? extends ServerHandeledEvent>, clientEventStrategy>();
+		strategyMap.put(CreateNewRoom.class, new CreateNewRoomStrategy());
+		strategyMap.put(JoinExistingRoom.class, new JoinExistingRoomStrategy());
+		strategyMap.put(NewMessage.class, new NewMessageStrategy());	
 	}
 			
 		/**
@@ -56,9 +54,9 @@ public class Controller
 			{
 				try
 				{
-					ApplicationEvent applicationEvent = eventQueue.take();
-					ApplicationEventStrategy applicationEventStrategy = strategyMap.get(applicationEvent.getClass());
-					applicationEventStrategy.execute(applicationEvent);
+					ServerHandeledEvent serverHandeledEvent = eventQueue.take();
+					clientEventStrategy applicationEventStrategy = strategyMap.get(serverHandeledEvent.getClass());
+					applicationEventStrategy.execute(serverHandeledEvent);
 				}
 				catch(InterruptedException e)
 				{
@@ -72,100 +70,58 @@ public class Controller
 		 * 
 		 * @author Ignacy Ślusarczyk
 		 */
-		abstract class ApplicationEventStrategy
+		abstract class clientEventStrategy
 		{
 			/**
 			 * Abstrakcyjna metoda opisująca obsługę danego zdarzenia.
 			 * 
 			 * @param applicationEvent zdarzenie aplikacji które musi zostać obsłużone
 			 */
-			abstract void execute(final ApplicationEvent applicationEvent);
-
+			abstract void execute(final ServerHandeledEvent applicationEvent);
 		}
 		
 		/**
-		 * Klasa wewnętrzna opisująca strategię obsługi kliknięcia przez użytkownika przycisku utworzenia nowego pokoju
+		 * Klasa wewnętrzna opisująca strategię obsługi żadania przez użytkownika utworzenia nowego pokoju
 		 *
 		 * @author Ignacy Ślusarczyk
 		 */
-		class ButtonCreateNewRoomClickedEventStrategy extends ApplicationEventStrategy
+		class CreateNewRoomStrategy extends clientEventStrategy
 		{
-			void execute(final ApplicationEvent applicationEventObject)
+			void execute(final ServerHandeledEvent applicationEventObject)
 			{
-				try
-				{
-				String roomName = ((ButtonCreateNewRoomClickedEvent) applicationEventObject).getRoomName();
-				String firstUserName = ((ButtonCreateNewRoomClickedEvent) applicationEventObject).getUserName();
-				
-				model.createNewRoom(roomName, firstUserName);
-				server.userOutputStreams.get(firstUserName).writeObject(new ConnectionEstablished(true));
-				}
-				catch(IOException ex)
-				{
-					System.err.println(ex);
-				}
+				CreateNewRoom createNewRoomInformation = (CreateNewRoom) applicationEventObject;
+				model.createNewRoom(createNewRoomInformation);
+				mainConnectionHandler.connectionEstablished(createNewRoomInformation.getUserId(), true);
 			}
 		}
 		
-		
 		/**
-		 * Klasa wewnętrzna opisująca strategię obsługi kliknięcia przez użytkownika przycisku dołączenia do już istniejącego pokoju
+		 * Klasa wewnętrzna opisująca strategię obsługi żadania przez użytkownika dołączenia do istniejącego pokoju
 		 *
 		 * @author Ignacy Ślusarczyk
 		 */
-		class ButtonJoinExistingRoomClickedEventStrategy extends ApplicationEventStrategy
+		class JoinExistingRoomStrategy extends clientEventStrategy
 		{
-			void execute(final ApplicationEvent applicationEventObject)
+			void execute(final ServerHandeledEvent applicationEventObject)
 			{
-				try
-				{
-				String roomName = ((ButtonJoinExistingRoomClickedEvent) applicationEventObject).getRoomName();
-				String newUserName = ((ButtonJoinExistingRoomClickedEvent) applicationEventObject).getUserName();
-				model.addUserToSpecificRoom(roomName, newUserName);
-				
-				server.userOutputStreams.get(newUserName).writeObject(new ConnectionEstablished(true));
-				}
-				catch(IOException ex)
-				{
-					System.err.println(ex);
-				}
+				JoinExistingRoom joinExistingRoomInformation = (JoinExistingRoom) applicationEventObject;	
+				model.addUserToSpecificRoom(joinExistingRoomInformation);
+				mainConnectionHandler.connectionEstablished(joinExistingRoomInformation.getUserId(), true);
 			}
 		}
 	
 		/**
-		 * Klasa wewnętrzna opisująca strategię obsługi kliknięcia przez użytkownika przycisku dołączenia do już istniejącego pokoju
+		 * Klasa wewnętrzna opisująca strategię wysłania przez użytkownika nowej wiadomości
 		 * 
 		 * @author Ignacy Ślusarczyk
 		 */
-		class ButtonSendMessageClickedEventStrategy extends ApplicationEventStrategy
+		class NewMessageStrategy extends clientEventStrategy
 		{
-			void execute(final ApplicationEvent applicationEventObject)
+			void execute(final ServerHandeledEvent applicationEventObject)
 			{
-				
-				String roomName = ((ButtonSendMessageClickedEvent) applicationEventObject).getRoomName();
-				String userName = ((ButtonSendMessageClickedEvent) applicationEventObject).getUserName();
-				String message = ((ButtonSendMessageClickedEvent) applicationEventObject).getMessage();
-				model.addMessageOfUser(roomName, userName, message);
-				server.sendMessageToAll(model.createConversationFromRoom(roomName),model.getUsersFromRoom(roomName), model.getUsersSetFromRoom(roomName));	
+				NewMessage newMessageInformation = (NewMessage) applicationEventObject;
+				model.addMessageOfUser(newMessageInformation);
+				mainConnectionHandler.sendMessageToAll(model.getRoomDataFromRoom(newMessageInformation.getRoomName()));	
 			}
-		}
-		
-		class CloseMainWindowEventStrategy extends ApplicationEventStrategy
-		{
-
-			@Override
-			void execute(ApplicationEvent applicationEventObject) 
-			{
-				String roomName = ((CloseMainWindowClickedEvent) applicationEventObject).getRoomName();
-				String userName = ((CloseMainWindowClickedEvent) applicationEventObject).getUserName();
-				
-				int  shouldClose =model.deleteUserFromSpecificRoom(roomName, userName);
-				if(shouldClose ==1)
-				{
-					server.closeServer();
-					System.exit(0);
-				}
-			}
-			
 		}
 }

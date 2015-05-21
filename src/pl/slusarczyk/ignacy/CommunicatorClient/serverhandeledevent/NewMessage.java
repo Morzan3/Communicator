@@ -1,0 +1,66 @@
+package pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent;
+
+import java.io.Serializable;
+
+import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
+
+/**
+ * Klasa opisująca zdarzenie naciśnięcia przez użytkownika przycisku wysłania wiadomości
+ * 
+ * @author Ignacy Śłusarczyk
+ */
+public class NewMessage extends ServerHandeledEvent implements Serializable
+{
+	private static final long serialVersionUID = 1L;
+	/**Nazwa pokoju**/
+	private final String roomName;
+	/**ID użytkownika**/
+	private final UserId userID;
+	/**Wiadomość, którą użytkownik chce wysłać**/
+	private final String message;
+	
+	
+	/**
+	 * Konstruktor tworzący zdarzenie na podstawie podancych parametrów
+	 * 
+	 * @param roomName nazwa pokoju
+	 * @param userID ID użytkownika
+	 * @param message wiadomość
+	 */
+	public NewMessage (final String roomName,final UserId userId,final String message)
+	{
+		this.roomName = roomName;
+		this.userID = userId;
+		this.message = message;
+	}
+	
+	/**
+	 * Metoda zwracająca nazwę pokoju, w którym dany użytkownik się znajduje 
+	 * 
+	 * @return nazwa pkokju
+	 */
+	public String getRoomName()
+	{
+		return roomName;
+	}
+	
+	/**
+	 * Metoda zwracająca ID użytkownika, który wysłał wiadomość
+	 * 
+	 * @return nazwa użytkownika
+	 */
+	public UserId getUserId ()
+	{
+		return userID;
+	}
+	
+	/**
+	 * Metoda zwracająca wiadomość, którą użytkownik wysłał
+	 * 
+	 * @return wiadomość
+	 */
+	public String getMessage ()
+	{
+		return message;
+	}
+}

@@ -1,49 +1,47 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.model;
 
-
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 
+import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.NewMessage;
 
 /**Klasa User zawiera wszystkie informacje o konkretnym użytkowniku
- * Na te informacji składa się jego nick oraz zbiór wiadomości typu Message, które reprezentują wszystkie wiadomości wysłane przez niego
+ * Na te informacji składa się jego userId oraz zbiór wiadomości typu Message, które reprezentują wszystkie wiadomości wysłane przez niego
  *  
  * @author Ignacy ŚLusarczyk
  *
  */
 
-public class User implements Serializable
+class User implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	/** Nazwa danego użytkownika **/
-	private String userName;
+	/** ID danego użytkownika **/
+	private final UserId userID;
 	/**Zbiór wysłanych przez użytkownika wiadomości **/
-	private HashSet<Message> messageHistory;
+	private final HashSet<Message> messageHistory;
 	
 	/**Konstruktor tworzący użytkownika o podanym imieniu
 	 * 
 	 * @param userName Nazwa użytkownika, którego tworzymy
 	 */
-	
-	public User (String userName)
+	public User (final UserId userId)
 	{
-		this.userName = userName;
+		this.userID = userId;
 		messageHistory = new HashSet<Message>();
 	}
 	
 	
 	/**Metoda zwracająca nazwę danego użytkownika**/
-	public String getUserName ()
+	public UserId getUserID ()
 	{
-		return this.userName;
+		return userID;
 	}
 	
 	/**Metoda zwracająca zbiór wiadomości wysłanych przez danego użytkowniak **/
 	public HashSet<Message> getUserMessageHistory ()
 	{
-		return this.messageHistory;
+		return messageHistory;
 	}
 	
 	/**Metoda dodająca wiadomość do zbioru wiadomości danego użytkownika
@@ -51,10 +49,10 @@ public class User implements Serializable
 	 * @param textMessage Treść dodawanej wiadomości
 	 * @param timestamp Znacznik czasowy dodawanej wiadomości
 	 */
-	public void addMessage (String textMessage, Date timestamp)
+	public void addMessage (final NewMessage newMessageinformation,final Date timestamp)
 	{
-		textMessage = userName + ":" + textMessage + "\n";
-		Message message = new Message(textMessage,timestamp);
-		messageHistory.add(message);
+		messageHistory.add(new Message(newMessageinformation.getMessage(),timestamp));
 	}
+	
+	
 }
