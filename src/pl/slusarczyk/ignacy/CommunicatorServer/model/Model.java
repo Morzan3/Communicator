@@ -2,6 +2,8 @@ package pl.slusarczyk.ignacy.CommunicatorServer.model;
 
 import java.util.Calendar;
 import java.util.HashSet;
+
+import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.ClientLeftRoom;
 import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.CreateNewRoom;
 import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.JoinExistingRoom;
 import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.NewMessage;
@@ -16,7 +18,7 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserData;
  */
 public class Model
 {
-	/**Zbiór zawierający listę aktywnych pokoi**/
+	/**Zbiór zawierający listę aktywnych pokoi*/
 	private final HashSet<Room> roomList;
 	
 	/**
@@ -63,7 +65,6 @@ public class Model
 	 * @param nameOfSender Nazwa użytkownika, do którego historii mamy dodać daną wiadomość
 	 * @param message Wiadomość do dodania.
 	 */
-	
 	public void addMessageOfUser (final NewMessage newMessageIfnormation)
 	{
 		for (Room room : roomList)
@@ -87,11 +88,10 @@ public class Model
 	 * @param roomName Nazwa pokoju, z którego chcemy pobrać listę użytkowników
 	 * @return Obiekt typu String, który zawiera wszystkich użytkowników pokoju, gotowy do wyświetlenia u klienta
 	 */
-	public RoomData getRoomDataFromRoom (String roomName)
+	public RoomData getRoomDataFromRoom (final String roomName)
 	{
 		HashSet<UserData> userSet= new HashSet<UserData>();
 	
-		
 		for (Room room : roomList)
 		{
 			if (roomName.equals(room.getRoomName()))
@@ -103,7 +103,7 @@ public class Model
 					{
 						messagesOfUser.add(new MessageData(message.getMessage(),message.getDate()));
 					}
-					UserData userData = new UserData(user.getUserID(), messagesOfUser);
+					UserData userData = new UserData(user.getUserID(), messagesOfUser, user.getUserStatus());
 					userSet.add(userData);
 				}
 				return new RoomData(userSet);
@@ -111,5 +111,27 @@ public class Model
 		
 		}
 		return null;
+	}
+	
+	/**
+	 * Metoda oznaczająca danego użytkownika jako nieaktywnego
+	 * 
+	 * @param clientLeftRoomInformation informacje o użytkowniku, którego trzeba oznaczyć
+	 */
+	public void setUserToInactive (ClientLeftRoom clientLeftRoomInformation)
+	{
+		for (Room room: roomList)
+		{
+			if(room.getRoomName().equals(clientLeftRoomInformation.getRoomName()))
+			{
+				for (User user:room.getUserList())
+				{
+					if(user.getUserID().getUserName().equals(clientLeftRoomInformation.getUserID().getUserName()))
+					{
+						user.setUserToInactive();
+					}
+				}
+			}
+		}
 	}
 }

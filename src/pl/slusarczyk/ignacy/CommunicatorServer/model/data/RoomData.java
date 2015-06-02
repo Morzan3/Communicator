@@ -11,10 +11,15 @@ import java.util.HashSet;
 public class RoomData implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	/**Zbiór użytkowników**/
+	/**Zbiór użytkowników*/
 	private  final HashSet<UserData> userSet;
 	
-	public RoomData(HashSet<UserData> userSet)
+	/**
+	 * Konstruktor tworzący obiekt na podstawie zadanych parametrów
+	 * 
+	 * @param userSet
+	 */
+	public RoomData(final HashSet<UserData> userSet)
 	{
 		this.userSet = userSet;
 	}

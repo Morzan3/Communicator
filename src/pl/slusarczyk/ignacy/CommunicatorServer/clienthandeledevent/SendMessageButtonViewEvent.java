@@ -7,6 +7,7 @@ package pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent;
  */
 public class SendMessageButtonViewEvent extends ClientHandeledEvent
 {
+	/** Treść wiadomości, którą wysyłamy*/
 	private final String message;
 	
 	/**

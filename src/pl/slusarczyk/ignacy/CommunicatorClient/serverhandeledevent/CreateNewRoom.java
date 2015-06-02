@@ -12,9 +12,9 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
 public class CreateNewRoom extends ServerHandeledEvent implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	/**Nazwa pokoju**/
+	/**Nazwa pokoju*/
 	private final String roomName;
-	/**Nazwa użytkownika**/
+	/**Nazwa użytkownika*/
 	private final UserId userID;
 
 	/**

@@ -10,16 +10,17 @@ import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.NewMessage;
  * Na te informacji składa się jego userId oraz zbiór wiadomości typu Message, które reprezentują wszystkie wiadomości wysłane przez niego
  *  
  * @author Ignacy ŚLusarczyk
- *
  */
 
 class User implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	/** ID danego użytkownika **/
+	/** ID danego użytkownika */
 	private final UserId userID;
-	/**Zbiór wysłanych przez użytkownika wiadomości **/
+	/**Zbiór wysłanych przez użytkownika wiadomości */
 	private final HashSet<Message> messageHistory;
+	/**Flaga określająca czy użytkownik jest aktywny*/
+	private boolean isActive;
 	
 	/**Konstruktor tworzący użytkownika o podanym imieniu
 	 * 
@@ -29,16 +30,24 @@ class User implements Serializable
 	{
 		this.userID = userId;
 		messageHistory = new HashSet<Message>();
+		this.isActive = true;
 	}
 	
-	
-	/**Metoda zwracająca nazwę danego użytkownika**/
+	/**
+	 * Metoda zwracająca nazwę danego użytkownika
+	 * 
+	 * @return userID
+	 */
 	public UserId getUserID ()
 	{
 		return userID;
 	}
 	
-	/**Metoda zwracająca zbiór wiadomości wysłanych przez danego użytkowniak **/
+	/**
+	 * Metoda zwracająca zbiór wiadomości wysłanych przez danego użytkowniak
+	 * 
+	 * @return zbior wiadomosci
+	 */
 	public HashSet<Message> getUserMessageHistory ()
 	{
 		return messageHistory;
@@ -54,5 +63,21 @@ class User implements Serializable
 		messageHistory.add(new Message(newMessageinformation.getMessage(),timestamp));
 	}
 	
+	/**
+	 * Metoda zwracająca informację czy dany użytkownik nadal korzysta z czatu
+	 * 
+	 * @return czy korzysta
+	 */
+	public boolean getUserStatus()
+	{
+		return isActive;
+	}
 	
+	/**
+	 * Metoda zaznaczająca danego użytkownika jako nieaktywnego
+	 */
+	public void setUserToInactive()
+	{
+		isActive = false;
+	}
 }

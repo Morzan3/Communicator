@@ -10,13 +10,10 @@ import java.util.HashSet;
  */
 class Room implements Serializable
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	/**Nazwa danego pokoju chatu**/
+	/**Nazwa danego pokoju chatu*/
 	private String roomName;
-	/**Lista obiektów klasy User**/
+	/**Lista obiektów klasy User*/
 	private HashSet<User> listOfUsers;
 	
 	/**Konstruktor tworzący nowy pokój na podstawie nazwy pokoju oraz nazwy użytkownika, który ten pokój założył

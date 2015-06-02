@@ -10,11 +10,18 @@ import java.util.Date;
  */
 public class MessageData implements Comparable<MessageData>, Serializable 
 {
-
 	private static final long serialVersionUID = 1L;
+	/**Treść wiadomości*/
 	private String message;
+	/**Znacznik czasowy*/
 	private final Date timeStamp;
 	
+	/**
+	 * Konstruktor tworzący obiekt na podstawei zadanych parametrów
+	 * 
+	 * @param message
+	 * @param timeStamp
+	 */
 	public MessageData(final String message, final Date timeStamp)
 	{
 		this.message = message;
@@ -45,7 +52,7 @@ public class MessageData implements Comparable<MessageData>, Serializable
 	 * Metoda zmieniająca treść wiadomości, konieczna do przy dopisywaniu nicku użytkownika do wiadomości przed ich sortowaniem i wyświetlaniem u klienta
 	 * @param newMessage
 	 */
-	public void setUserMessage(String newMessage)
+	public void setUserMessage(final String newMessage)
 	{
 		message = newMessage;
 	}
@@ -53,7 +60,7 @@ public class MessageData implements Comparable<MessageData>, Serializable
 	/**
 	 * Metoda pozwalająca sortować obiekty typu MessageData wg. daty powstania
 	 */
-	public int compareTo(MessageData o) 
+	public int compareTo(final MessageData o) 
 	{
 	  return getTimeStamp().compareTo(o.getTimeStamp());
 	}

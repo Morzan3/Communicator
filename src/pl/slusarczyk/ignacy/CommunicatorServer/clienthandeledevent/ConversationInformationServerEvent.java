@@ -13,6 +13,7 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.data.RoomData;
 public class ConversationInformationServerEvent extends ClientHandeledEvent implements Serializable
 {
 	private static final long serialVersionUID = 1L;
+	/**Opakowane informacje o pokoju*/
 	private final RoomData roomData;
 	
 	/**

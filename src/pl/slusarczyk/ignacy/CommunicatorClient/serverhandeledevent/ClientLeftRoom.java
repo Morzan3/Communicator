@@ -1,5 +1,4 @@
 package pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent;
-
 import java.io.Serializable;
 
 import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
@@ -12,9 +11,9 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
 public class ClientLeftRoom extends ServerHandeledEvent implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	/**Nazwa użytkownika, który wyszedł z chatu**/
+	/**Nazwa użytkownika, który wyszedł z chatu*/
 	private final UserId userId;
-	/**Nazwa pokoju, w którym użytkownik się znajdował**/
+	/**Nazwa pokoju, w którym użytkownik się znajdował*/
 	private final String roomName;
 	
 	/**

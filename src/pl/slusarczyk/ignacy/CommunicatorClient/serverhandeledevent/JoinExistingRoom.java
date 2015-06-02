@@ -8,17 +8,15 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
  * Klasa opisująca zdarzenie naciśnięcia przez użytkownika przycisku dołączenia do pokoju
  * 
  * @author Ignacy Ślusarczyk
- *
  */
 public class JoinExistingRoom extends ServerHandeledEvent implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	/**Nazwa pokoju**/
+	/**Nazwa pokoju*/
 	private final String roomName;
-	/**Nazwa użytkownika**/
+	/**Nazwa użytkownika*/
 	private final UserId userID;
 
-	
 	/**
 	 * Konstruktor tworzący zdarzenie na podstawie zadanych parametrów
 	 * 

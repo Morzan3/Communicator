@@ -12,13 +12,12 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
 public class NewMessage extends ServerHandeledEvent implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	/**Nazwa pokoju**/
+	/**Nazwa pokoju*/
 	private final String roomName;
-	/**ID użytkownika**/
+	/**ID użytkownika*/
 	private final UserId userID;
-	/**Wiadomość, którą użytkownik chce wysłać**/
+	/**Wiadomość, którą użytkownik chce wysłać*/
 	private final String message;
-	
 	
 	/**
 	 * Konstruktor tworzący zdarzenie na podstawie podancych parametrów

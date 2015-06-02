@@ -12,19 +12,19 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
  */
 public class UserData implements Serializable
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	/**Id użytkownika**/
+	/**Id użytkownika*/
 	final private UserId userId;
-	/**Zbiór opakowanych wiadomości użytkownika**/
+	/**Zbiór opakowanych wiadomości użytkownika*/
 	final private HashSet<MessageData> usersMessages;
+	/**Flaga określająca czy użytkownik jest aktywny*/
+	private final boolean isActive;
 	
-	public UserData(final UserId userId, final HashSet<MessageData> userMessages)
+	public UserData(final UserId userId, final HashSet<MessageData> userMessages, final boolean isActive)
 	{
 		this.userId = userId;
 		this.usersMessages = userMessages;
+		this.isActive = isActive;
 	}
 
 	/**
@@ -45,5 +45,15 @@ public class UserData implements Serializable
 	public HashSet<MessageData> getUsersMessages() 
 	{
 		return usersMessages;
+	}
+	
+	/**
+	 * Metoda zwracająca informację czy dany użytkownik jest aktywny
+	 * 
+	 * @return
+	 */
+	public boolean isUserActive()
+	{
+		return isActive;
 	}
 }

@@ -16,16 +16,18 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
  */
 public class UserConnectionHandler extends Thread
 {
-	/**Socket klienta**/
+	/**Socket klienta*/
 	private final Socket userSocket;
-	/**Strumień wejściowy**/
+	/**Strumień wejściowy*/
 	private ObjectInputStream inputStream;
-	/**Strumień wyjściowy**/
+	/**Strumień wyjściowy*/
 	private ObjectOutputStream outputStream;
-	/**Mapa ID userów oraz ich strumieni wyjściowych**/
+	/**Mapa ID userów oraz ich strumieni wyjściowych*/
 	 private final HashMap<UserId,ObjectOutputStream> userOutputStreams;
-	/**Kolejka blokująca zdarzeń**/
+	/**Kolejka blokująca zdarzeń*/
 	 private final BlockingQueue<ServerHandeledEvent> eventQueue;
+	 /**Flaga określająca czy wątek pracuje*/
+	 private boolean running;
 	
 	/**
 	 * Konstruktor tworzący nowy wątek nasłuchujący połączeń od danego użytkownika
@@ -39,6 +41,7 @@ public class UserConnectionHandler extends Thread
 		this.userSocket = userSocket;
 		this.eventQueue = eventQueue;
 		this.userOutputStreams = userOutputStreams;
+		this.running = true;
 		
 		try
 		{
@@ -58,7 +61,7 @@ public class UserConnectionHandler extends Thread
 		public void run()
 		{
 			ServerHandeledEvent appEvent;
-			while(true)
+			while(running)
 			{	
 				try
 				{
@@ -71,7 +74,9 @@ public class UserConnectionHandler extends Thread
 					}
 					else if(appEvent instanceof ClientLeftRoom)
 					{
-						this.userSocket.close();
+						eventQueue.add(appEvent);
+						userSocket.close();
+						running = false;
 						break;
 					}
 					else 
@@ -81,7 +86,7 @@ public class UserConnectionHandler extends Thread
 				}
 				catch (IOException ex)
 				{
-					System.err.println(ex);
+					System.exit(0);
 				}
 				catch (ClassNotFoundException ex)
 				{
@@ -90,6 +95,10 @@ public class UserConnectionHandler extends Thread
 				catch (NullPointerException ex3)
 				{
 					System.err.println("Błąd odbierania obiektu");
+				}
+				catch(ClassCastException ex4)
+				{
+					System.err.println(ex4);
 				}
 			}
 		}

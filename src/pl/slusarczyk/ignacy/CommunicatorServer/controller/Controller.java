@@ -43,6 +43,7 @@ public class Controller
 		strategyMap.put(CreateNewRoom.class, new CreateNewRoomStrategy());
 		strategyMap.put(JoinExistingRoom.class, new JoinExistingRoomStrategy());
 		strategyMap.put(NewMessage.class, new NewMessageStrategy());	
+		strategyMap.put(ClientLeftRoom.class,new ClientLeftRoomStrategy());
 	}
 			
 		/**
@@ -123,5 +124,16 @@ public class Controller
 				model.addMessageOfUser(newMessageInformation);
 				mainConnectionHandler.sendMessageToAll(model.getRoomDataFromRoom(newMessageInformation.getRoomName()));	
 			}
+		}
+		
+		class ClientLeftRoomStrategy extends clientEventStrategy
+		{
+			@Override
+			void execute(final ServerHandeledEvent applicationEventObject) 
+			{
+				ClientLeftRoom clientLeftRoomInformation = (ClientLeftRoom) applicationEventObject;
+				model.setUserToInactive(clientLeftRoomInformation);
+			}
+			
 		}
 }

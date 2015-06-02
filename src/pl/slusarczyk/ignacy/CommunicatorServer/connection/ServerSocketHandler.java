@@ -17,11 +17,11 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
  */
 class ServerSocketHandler extends Thread
 {
-	/**Socket servera**/
+	/**Socket servera*/
 	private final ServerSocket serverSocket;
-	/**Kolejka blokująca zdarzeń**/
+	/**Kolejka blokująca zdarzeń*/
 	private final BlockingQueue<ServerHandeledEvent> eventQueue;
-	/**Mapa użytkowników i ich output streamów**/
+	/**Mapa użytkowników i ich output streamów*/
 	private final HashMap <UserId,ObjectOutputStream> userOutputStreams;
 	
 	/**

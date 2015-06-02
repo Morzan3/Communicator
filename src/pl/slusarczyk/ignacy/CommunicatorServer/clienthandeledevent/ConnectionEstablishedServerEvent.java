@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class ConnectionEstablishedServerEvent extends ClientHandeledEvent implements Serializable
 {
 	 private static final long serialVersionUID = 1L;
-	/**Invormacja o nawiązaniu połączenia**/
+	/**Invormacja o nawiązaniu połączenia*/
 	 private  final boolean isEstablished;
 	
 	/**
@@ -25,6 +25,7 @@ public class ConnectionEstablishedServerEvent extends ClientHandeledEvent implem
 	
 	/**
 	 * Metoda zwracająca informację o zaakceptowaniu połączenia
+	 * 
 	 * @return
 	 */
 	public boolean getConnectionInfrmation()

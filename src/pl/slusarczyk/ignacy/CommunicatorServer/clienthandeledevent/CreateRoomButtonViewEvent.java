@@ -7,13 +7,13 @@ package pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent;
  */
 public class CreateRoomButtonViewEvent extends ClientHandeledEvent
 {
-	/**Nazwa użytkownika, który tworzy pokój, zamieniana potem na userId**/
+	/**Nazwa użytkownika, który tworzy pokój, zamieniana potem na userId*/
 	private  final String userName;
-	/**Nazwa hosta z którym się łączy**/
+	/**Nazwa hosta z którym się łączy*/
 	private final String hostName;
-	/**Port na którym się łączy**/
+	/**Port na którym się łączy*/
 	private final int port;
-	/**Nazwa pokoju na którym chce prowadzić rozmowę**/
+	/**Nazwa pokoju na którym chce prowadzić rozmowę*/
 	private final String roomName;
 	
 	public CreateRoomButtonViewEvent(final String hostName,final int port,final String userName,final String roomName)

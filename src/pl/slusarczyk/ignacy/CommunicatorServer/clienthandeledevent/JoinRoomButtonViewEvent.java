@@ -8,11 +8,11 @@ package pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent;
 public class JoinRoomButtonViewEvent extends ClientHandeledEvent
 {
 	private final String userName;
-	/**Nazwa hosta z którym jest połączony**/
+	/**Nazwa hosta z którym jest połączony*/
 	private final String hostName;
-	/**Port na którym się łączy**/
+	/**Port na którym się łączy*/
 	private final int port;
-	/**Nazwa pokoju na którym prowadzi rozmowę**/
+	/**Nazwa pokoju na którym prowadzi rozmowę*/
 	private final String roomName;
 	
 	/**

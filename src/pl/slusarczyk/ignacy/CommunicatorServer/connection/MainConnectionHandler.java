@@ -20,13 +20,13 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserData;
  */
 public class MainConnectionHandler 
 {
-	/** Mapa przetrzymująca strumienie wyjściowe użytkowników, w której kluczem jest userId **/
+	/** Mapa przetrzymująca strumienie wyjściowe użytkowników, w której kluczem jest userId */
 	private final HashMap <UserId, ObjectOutputStream> userOutputStreams;
-	/**Socket servera**/
+	/**Socket servera*/
 	private ServerSocket serverSocket;
-	/**Port na którym serwer nasłuchuje**/
+	/**Port na którym serwer nasłuchuje*/
 	private final int portNumber;
-	/**Kolejka bloująca zdarzeń**/
+	/**Kolejka bloująca zdarzeń*/
 	private final BlockingQueue<ServerHandeledEvent> eventQueue; 
 	
 	/**
@@ -42,7 +42,7 @@ public class MainConnectionHandler
 		this.userOutputStreams = new HashMap <UserId, ObjectOutputStream>();
 		
 		createServerSocket();
-		ServerSocketHandler serverSocketHandler = new ServerSocketHandler(this.serverSocket, this.eventQueue, this.userOutputStreams);
+		ServerSocketHandler serverSocketHandler = new ServerSocketHandler(serverSocket, this.eventQueue, userOutputStreams);
 		serverSocketHandler.start();
 	}
 	
@@ -71,7 +71,8 @@ public class MainConnectionHandler
 		{
 			this.serverSocket.close();
 		}
-		catch(IOException ex) {
+		catch(IOException ex)
+		{
 			System.err.println("Nastąpił błąd podczas zamykania połączenia " + ex);
 			System.exit(2);	
 		}
@@ -84,14 +85,14 @@ public class MainConnectionHandler
 	 * @param usersConversation rozmowa pomiędzy użytkownikami
 	 * @param listOfUsers lista użytkowników aktualnie będących na chacie
 	 */
-	public void sendDirectMessage (UserId userID, RoomData roomData)
+	public void sendDirectMessage (final UserId userID,final RoomData roomData)
 	{
 		try
 		{
-		ConversationInformationServerEvent userConversationToSend = new ConversationInformationServerEvent (roomData);
-		ObjectOutputStream userOutputStream;
-		userOutputStream = userOutputStreams.get(userID);
-		userOutputStream.writeObject(userConversationToSend);
+			ConversationInformationServerEvent userConversationToSend = new ConversationInformationServerEvent (roomData);
+			ObjectOutputStream userOutputStream;
+			userOutputStream = userOutputStreams.get(userID);
+			userOutputStream.writeObject(userConversationToSend);
 		}
 		catch(IOException ex)
 		{
@@ -103,13 +104,15 @@ public class MainConnectionHandler
 	 * Metoda wysyłająca rozmowę do wszystkich użytkowników znajdujących się w tym samym pokoju
 	 * 
 	 * @param roomData Opakowany obiekt pokój, w którym znajduje się konwersacja do wyśweitlenia oraz lista użytkowników
-	 * */
-	
-	public void sendMessageToAll (RoomData roomData)
+	 */
+	public void sendMessageToAll (final RoomData roomData)
 	{
 		for (UserData userData: roomData.getUserSet())
 		{
+			if(userData.isUserActive()==true)
+			{
 			sendDirectMessage(userData.getUserId(), roomData);
+			}
 		}
 	}
 	
@@ -128,6 +131,5 @@ public class MainConnectionHandler
 		{
 			System.err.println(e);
 		}
-	}
-	
+	}	
 }

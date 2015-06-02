@@ -11,9 +11,9 @@ import java.util.Date;
 class Message implements Comparable<Message>,  Serializable
 {
 	private static final long serialVersionUID = 1L;
-	/**Treść konkretnej wiadomości**/
+	/**Treść konkretnej wiadomości*/
 	private final String message;
-	/**Znacznik czasowy utworzenia danej wiadomości**/
+	/**Znacznik czasowy utworzenia danej wiadomości*/
 	private final Date createdOn;
 
 	/**
