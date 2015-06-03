@@ -121,11 +121,12 @@ public class MainConnectionHandler
 	 * @param userId
 	 * @param connectionEstablished
 	 */
-	public void connectionEstablished(final UserId userId,final boolean connectionEstablished)
+	public void connectionEstablished(final UserId userId,final boolean connectionEstablished,final String roomName)
 	{
 		try 
 		{
-			userOutputStreams.get(userId).writeObject(new ConnectionEstablishedServerEvent(connectionEstablished));
+			userOutputStreams.get(userId).writeObject(new ConnectionEstablishedServerEvent(connectionEstablished,userId,roomName));
+			System.out.println(userOutputStreams.get(userId));
 		} 
 		catch (IOException e) 
 		{

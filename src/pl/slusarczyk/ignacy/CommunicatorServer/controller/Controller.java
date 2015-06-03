@@ -92,7 +92,7 @@ public class Controller
 			{
 				CreateNewRoom createNewRoomInformation = (CreateNewRoom) applicationEventObject;
 				model.createNewRoom(createNewRoomInformation);
-				mainConnectionHandler.connectionEstablished(createNewRoomInformation.getUserId(), true);
+				mainConnectionHandler.connectionEstablished(createNewRoomInformation.getUserId(), true, createNewRoomInformation.getRoomName());
 			}
 		}
 		
@@ -107,7 +107,7 @@ public class Controller
 			{
 				JoinExistingRoom joinExistingRoomInformation = (JoinExistingRoom) applicationEventObject;	
 				model.addUserToSpecificRoom(joinExistingRoomInformation);
-				mainConnectionHandler.connectionEstablished(joinExistingRoomInformation.getUserId(), true);
+				mainConnectionHandler.connectionEstablished(joinExistingRoomInformation.getUserId(), true,joinExistingRoomInformation.getRoomName());
 			}
 		}
 	

@@ -36,7 +36,8 @@ public class UserId implements Serializable
 			return false;
 		}
 		
-		String otherUserName = (String) other;
+		UserId otherUserId = (UserId) other;
+		String otherUserName = otherUserId.getUserName();
 		return this.userName.equals(otherUserName);
 	}
 	

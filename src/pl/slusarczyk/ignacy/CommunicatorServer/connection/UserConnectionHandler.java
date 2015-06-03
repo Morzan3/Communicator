@@ -5,9 +5,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.*;
+import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.UserAlreadyExistsServerEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
 
 /** Klasa odpowiedzialna za odbieranie zdarzeń od klienta i dodawanie ich do blocking queue 
@@ -61,6 +64,7 @@ public class UserConnectionHandler extends Thread
 		public void run()
 		{
 			ServerHandeledEvent appEvent;
+			outer:
 			while(running)
 			{	
 				try
@@ -70,7 +74,25 @@ public class UserConnectionHandler extends Thread
 					if (appEvent instanceof UserName) 
 					{
 						UserName userNameInformation = (UserName) appEvent;
-						userOutputStreams.put(userNameInformation.getUserID(),outputStream);
+						
+						Iterator it = userOutputStreams.entrySet().iterator();
+						while (it.hasNext())
+						{
+							System.out.println("Sprawdzam");
+							Map.Entry pair = (Map.Entry)it.next();
+							UserId userID = (UserId)pair.getKey();
+							if (userNameInformation.getUserID().equals(userID)==true)
+							{
+								outputStream.writeObject(new UserAlreadyExistsServerEvent());
+								appEvent = (ServerHandeledEvent) inputStream.readObject();
+								continue outer;
+							}
+						}
+						
+							System.out.println("Nie istnieje jeszcze");
+							userOutputStreams.put(userNameInformation.getUserID(),outputStream);
+							System.out.println(outputStream);
+					
 					}
 					else if(appEvent instanceof ClientLeftRoom)
 					{
@@ -86,7 +108,7 @@ public class UserConnectionHandler extends Thread
 				}
 				catch (IOException ex)
 				{
-					System.exit(0);
+					//System.exit(0);
 				}
 				catch (ClassNotFoundException ex)
 				{
@@ -98,7 +120,7 @@ public class UserConnectionHandler extends Thread
 				}
 				catch(ClassCastException ex4)
 				{
-					System.err.println(ex4);
+					System.err.println("Tutaj" + ex4);
 				}
 			}
 		}
