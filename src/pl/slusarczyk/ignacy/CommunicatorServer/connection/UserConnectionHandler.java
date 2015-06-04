@@ -5,12 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.*;
-import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.UserAlreadyExistsServerEvent;
+import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.InformationMessageServerEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
 
 /** Klasa odpowiedzialna za odbieranie zdarzeń od klienta i dodawanie ich do blocking queue 
@@ -64,42 +62,45 @@ public class UserConnectionHandler extends Thread
 		public void run()
 		{
 			ServerHandeledEvent appEvent;
-			outer:
 			while(running)
 			{	
 				try
 				{
 					appEvent = (ServerHandeledEvent) inputStream.readObject();
-					
-					if (appEvent instanceof UserName) 
+			
+					if (appEvent instanceof CreateNewRoom) 
 					{
-						UserName userNameInformation = (UserName) appEvent;
-						
-						Iterator it = userOutputStreams.entrySet().iterator();
-						while (it.hasNext())
+						CreateNewRoom createNewRoomInformation = (CreateNewRoom) appEvent;	
+						if (userOutputStreams.get(createNewRoomInformation.getUserId()) != null)
 						{
-							System.out.println("Sprawdzam");
-							Map.Entry pair = (Map.Entry)it.next();
-							UserId userID = (UserId)pair.getKey();
-							if (userNameInformation.getUserID().equals(userID)==true)
-							{
-								outputStream.writeObject(new UserAlreadyExistsServerEvent());
-								appEvent = (ServerHandeledEvent) inputStream.readObject();
-								continue outer;
-							}
+							outputStream.writeObject(new InformationMessageServerEvent("Uzytkownik o podanej nazwie juz istnieje", createNewRoomInformation.getUserId()));				
 						}
-						
-							System.out.println("Nie istnieje jeszcze");
-							userOutputStreams.put(userNameInformation.getUserID(),outputStream);
-							System.out.println(outputStream);
-					
+						else
+						{
+							userOutputStreams.put(createNewRoomInformation.getUserId(), outputStream);
+							eventQueue.add(appEvent);
+						}
+					}
+					else if(appEvent instanceof JoinExistingRoom)
+					{
+						JoinExistingRoom joinNewRoomInformation = (JoinExistingRoom) appEvent;	
+						if (userOutputStreams.get(joinNewRoomInformation.getUserId()) != null)
+						{
+							outputStream.writeObject(new InformationMessageServerEvent("Uzytkownik o podanej nazwie juz istnieje", joinNewRoomInformation.getUserId()));			
+						}
+						else
+						{
+							userOutputStreams.put(joinNewRoomInformation.getUserId(), outputStream);
+							eventQueue.add(appEvent);
+						}
 					}
 					else if(appEvent instanceof ClientLeftRoom)
 					{
+						ClientLeftRoom clientLeftRoomInformation = (ClientLeftRoom) appEvent;
+						userOutputStreams.remove(clientLeftRoomInformation.getUserID());
 						eventQueue.add(appEvent);
 						userSocket.close();
 						running = false;
-						break;
 					}
 					else 
 					{
@@ -108,7 +109,7 @@ public class UserConnectionHandler extends Thread
 				}
 				catch (IOException ex)
 				{
-					//System.exit(0);
+					System.err.println(ex);
 				}
 				catch (ClassNotFoundException ex)
 				{

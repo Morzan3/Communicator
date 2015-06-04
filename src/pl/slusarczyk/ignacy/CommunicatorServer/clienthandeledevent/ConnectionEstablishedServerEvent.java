@@ -24,7 +24,7 @@ public class ConnectionEstablishedServerEvent extends ClientHandeledEvent implem
 	 * 
 	 * @param isEstablished czy połączenie przyjęte
 	 */
-	public ConnectionEstablishedServerEvent(final boolean isEstablished, UserId userId,String roomName)
+	public ConnectionEstablishedServerEvent(final boolean isEstablished, final UserId userId, final String roomName)
 	{
 		this.isEstablished = isEstablished;
 		this.userID = userId;
@@ -41,14 +41,23 @@ public class ConnectionEstablishedServerEvent extends ClientHandeledEvent implem
 		return this.isEstablished;
 	}
 	
+	/**
+	 * Metoda zwracająca userId
+	 * 
+	 * @return
+	 */
 	public UserId getUserID()
 	{
 		return userID;
 	}
 	
+	/**
+	 * Metoda zwracająca nazwę pokoju
+	 * 
+	 * @return
+	 */
 	public String getRoomName()
 	{
 		return roomName;
 	}
-	
 }

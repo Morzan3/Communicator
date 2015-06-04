@@ -14,9 +14,9 @@ public class UserData implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	/**Id użytkownika*/
-	final private UserId userId;
+	private final UserId userId;
 	/**Zbiór opakowanych wiadomości użytkownika*/
-	final private HashSet<MessageData> usersMessages;
+	private final HashSet<MessageData> usersMessages;
 	/**Flaga określająca czy użytkownik jest aktywny*/
 	private final boolean isActive;
 	

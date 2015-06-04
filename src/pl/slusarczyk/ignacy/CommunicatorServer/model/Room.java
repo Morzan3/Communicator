@@ -46,7 +46,7 @@ class Room implements Serializable
 	 */
 	public String getRoomName ()
 	{
-		return this.roomName;
+		return roomName;
 	}
 		
 	/** Metoda dodaję użytkownika o zadanym imieniu do pokoju
@@ -55,24 +55,7 @@ class Room implements Serializable
 	 */
 	public void addUser (final UserId userId)
 	{
-		System.out.println("Dodaje uzytkownika do konkretnego pokoju ");
-		User newUser = new User (userId);
+		User newUser = new User(userId);
 		listOfUsers.add(newUser);
-	}
-	
-	/**Metoda usuwająca użytkownika o zadanym imieniu z danego pokoju 
-	 * 
-	 * @param userToDelete Nazwa użytkownika, którego chcemy usunąć 
-	 */
-	public void deleteUserByName (final UserId userToDelete)
-	{
-		for (User user : listOfUsers)
-		{
-			if(userToDelete.hashCode() == user.getUserID().hashCode())
-			{
-				listOfUsers.remove(user);
-				return;
-			}
-		}
 	}
 }

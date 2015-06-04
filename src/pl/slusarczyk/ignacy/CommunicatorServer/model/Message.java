@@ -35,7 +35,7 @@ class Message implements Comparable<Message>,  Serializable
 	 */
 	public String getMessage()
 	{
-		return this.message;
+		return message;
 	}
 	
 	/**
@@ -45,16 +45,14 @@ class Message implements Comparable<Message>,  Serializable
 	 */
 	public Date getDate ()
 	{
-		return this.createdOn;
+		return createdOn;
 	}
 	
 	/** 
 	 * Metoda która umożliwia posortowanie wiadomości wg. czasu ich utworzenia
-	 * 
 	 */
 	public int compareTo(Message o) 
 	{
 	  return getDate().compareTo(o.getDate());
 	}
-	
 }

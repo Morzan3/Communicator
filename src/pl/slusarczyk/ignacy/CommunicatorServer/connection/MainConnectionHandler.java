@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.ServerHandeledEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.ConnectionEstablishedServerEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.ConversationInformationServerEvent;
+import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.InformationMessageServerEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.RoomData;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserData;
@@ -63,22 +64,6 @@ public class MainConnectionHandler
 	}
 	
 	/**
-	 * Metoda do bezpiecznego zakończenia połączenia
-	 */
-	public void closeServer()
-	{
-		try 
-		{
-			this.serverSocket.close();
-		}
-		catch(IOException ex)
-		{
-			System.err.println("Nastąpił błąd podczas zamykania połączenia " + ex);
-			System.exit(2);	
-		}
-	}
-			
-	/**
 	 * Metoda wysyłająca bezpośrednio wiadomość do użytkownika o zadanym nicku
 	 * 
 	 * @param userName nazwa użytkownika
@@ -109,7 +94,7 @@ public class MainConnectionHandler
 	{
 		for (UserData userData: roomData.getUserSet())
 		{
-			if(userData.isUserActive()==true)
+			if(userData.isUserActive() == true)
 			{
 			sendDirectMessage(userData.getUserId(), roomData);
 			}
@@ -117,7 +102,7 @@ public class MainConnectionHandler
 	}
 	
 	/**
-	 * Metoda wysyłająca do klienta potwierdzenie nawiązania połączeni
+	 * Metoda wysyłająca do klienta potwierdzenie poprawnego utworzenia lub dodania do pokoju
 	 * @param userId
 	 * @param connectionEstablished
 	 */
@@ -126,11 +111,23 @@ public class MainConnectionHandler
 		try 
 		{
 			userOutputStreams.get(userId).writeObject(new ConnectionEstablishedServerEvent(connectionEstablished,userId,roomName));
-			System.out.println(userOutputStreams.get(userId));
 		} 
 		catch (IOException e) 
 		{
 			System.err.println(e);
 		}
 	}	
+		
+	public void sendInformationMessage(InformationMessageServerEvent informationMessageObject)
+	{
+		try
+		{
+			userOutputStreams.get(informationMessageObject.getUserID()).writeObject(informationMessageObject);
+			userOutputStreams.remove(informationMessageObject.getUserID());
+		}
+		catch(IOException ex)
+		{
+			System.err.println(ex);
+		}
+	}
 }

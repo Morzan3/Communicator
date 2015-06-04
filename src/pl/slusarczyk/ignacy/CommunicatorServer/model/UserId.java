@@ -21,7 +21,7 @@ public class UserId implements Serializable
 	public UserId(final String userName)
 	{
 		this.userName = userName;
-	};
+	}
 	
 	@Override
 	public boolean equals(Object other) 

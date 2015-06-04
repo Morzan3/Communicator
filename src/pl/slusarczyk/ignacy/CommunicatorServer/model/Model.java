@@ -35,10 +35,18 @@ public class Model
 	 * @param roomName Nazwa pokoju który zakładamy
 	 * @param nameOfFirstUser Nazwa użytkownika, który zakłada pokój 
 	 */
-	public void createNewRoom(final CreateNewRoom createNewRoomInformation)
+	public boolean createNewRoom(final CreateNewRoom createNewRoomInformation)
 	{
+		for(Room room : roomList)
+		{
+			if (room.getRoomName().equals(createNewRoomInformation.getRoomName()) == true)
+			{
+				return false;
+			}
+		}
 		Room room = new Room(createNewRoomInformation.getRoomName(), createNewRoomInformation.getUserId());
 		roomList.add(room);
+		return true;
 	}
 
 	/**
@@ -47,15 +55,17 @@ public class Model
 	 * @param roomName Nazwa pokoju, do której dodajemy użytkownika
 	 * @param userToAddName Nick użytkownika, którego dodajemy
 	 */
-	public void addUserToSpecificRoom (final JoinExistingRoom joinExistingRoominformation)
+	public boolean addUserToSpecificRoom (final JoinExistingRoom joinExistingRoominformation)
 	{
 		for (Room room : roomList)
 		{
 			if (joinExistingRoominformation.getRoomName().equals(room.getRoomName()))
 			{
 				room.addUser(joinExistingRoominformation.getUserId());
+				return true;
 			}
-		}	
+		}
+		return false;
 	}
 		
 	/**
@@ -73,7 +83,7 @@ public class Model
 			{
 				for (User user: room.getUserList())
 				{		
-					if (newMessageIfnormation.getUserId().hashCode() == user.getUserID().hashCode())
+					if (newMessageIfnormation.getUserId().equals(user.getUserID()))
 					{
 						user.addMessage(newMessageIfnormation,Calendar.getInstance().getTime());
 					}
@@ -88,13 +98,13 @@ public class Model
 	 * @param roomName Nazwa pokoju, z którego chcemy pobrać listę użytkowników
 	 * @return Obiekt typu String, który zawiera wszystkich użytkowników pokoju, gotowy do wyświetlenia u klienta
 	 */
-	public RoomData getRoomDataFromRoom (final String roomName)
+	public RoomData getRoomDataFromRoom (final NewMessage newMessageInformationObject)
 	{
 		HashSet<UserData> userSet= new HashSet<UserData>();
 	
 		for (Room room : roomList)
 		{
-			if (roomName.equals(room.getRoomName()))
+			if (newMessageInformationObject.getRoomName().equals(room.getRoomName()))
 			{
 				for(User user: room.getUserList())
 				{
@@ -108,7 +118,6 @@ public class Model
 				}
 				return new RoomData(userSet);
 			}
-		
 		}
 		return null;
 	}
@@ -126,7 +135,7 @@ public class Model
 			{
 				for (User user:room.getUserList())
 				{
-					if(user.getUserID().getUserName().equals(clientLeftRoomInformation.getUserID().getUserName()))
+					if(user.getUserID().equals(clientLeftRoomInformation.getUserID()))
 					{
 						user.setUserToInactive();
 					}

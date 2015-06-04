@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
+import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.InformationMessageServerEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.connection.*;
 
 /**
@@ -91,8 +92,14 @@ public class Controller
 			void execute(final ServerHandeledEvent applicationEventObject)
 			{
 				CreateNewRoom createNewRoomInformation = (CreateNewRoom) applicationEventObject;
-				model.createNewRoom(createNewRoomInformation);
-				mainConnectionHandler.connectionEstablished(createNewRoomInformation.getUserId(), true, createNewRoomInformation.getRoomName());
+				if (model.createNewRoom(createNewRoomInformation) == true)
+				{
+					mainConnectionHandler.connectionEstablished(createNewRoomInformation.getUserId(), true, createNewRoomInformation.getRoomName());
+				}
+				else 
+				{
+					mainConnectionHandler.sendInformationMessage(new InformationMessageServerEvent("Pokoj o zadanej nazwie juz istnieje",createNewRoomInformation.getUserId()));
+				}
 			}
 		}
 		
@@ -106,8 +113,14 @@ public class Controller
 			void execute(final ServerHandeledEvent applicationEventObject)
 			{
 				JoinExistingRoom joinExistingRoomInformation = (JoinExistingRoom) applicationEventObject;	
-				model.addUserToSpecificRoom(joinExistingRoomInformation);
-				mainConnectionHandler.connectionEstablished(joinExistingRoomInformation.getUserId(), true,joinExistingRoomInformation.getRoomName());
+				if(model.addUserToSpecificRoom(joinExistingRoomInformation) == true)
+				{
+					mainConnectionHandler.connectionEstablished(joinExistingRoomInformation.getUserId(), true,joinExistingRoomInformation.getRoomName());
+				}
+				else 
+				{
+					mainConnectionHandler.sendInformationMessage(new InformationMessageServerEvent("Pokoj do ktorego chcesz dolaczyc nie istnieje",joinExistingRoomInformation.getUserId()));
+				}
 			}
 		}
 	
@@ -122,18 +135,21 @@ public class Controller
 			{
 				NewMessage newMessageInformation = (NewMessage) applicationEventObject;
 				model.addMessageOfUser(newMessageInformation);
-				mainConnectionHandler.sendMessageToAll(model.getRoomDataFromRoom(newMessageInformation.getRoomName()));	
+				mainConnectionHandler.sendMessageToAll(model.getRoomDataFromRoom(newMessageInformation));	
 			}
 		}
 		
+		/**
+		 * Klasa wewnętrzna opisująca strategię wyjscia użytkownika z pokoju rozmów
+		 * 
+		 * @author Ignacy Ślusarc
+		 */
 		class ClientLeftRoomStrategy extends clientEventStrategy
 		{
-			@Override
 			void execute(final ServerHandeledEvent applicationEventObject) 
 			{
 				ClientLeftRoom clientLeftRoomInformation = (ClientLeftRoom) applicationEventObject;
 				model.setUserToInactive(clientLeftRoomInformation);
 			}
-			
 		}
 }
