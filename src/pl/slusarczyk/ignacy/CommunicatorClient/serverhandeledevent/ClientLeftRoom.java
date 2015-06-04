@@ -1,7 +1,7 @@
 package pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent;
 import java.io.Serializable;
 
-import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
 /**
  * Klasa opisująca zdarzenie naciśnięcia przez użytkownika przycisku wyjścia z chatu w oknie rozmowy.
@@ -12,7 +12,7 @@ public class ClientLeftRoom extends ServerHandeledEvent implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	/**Nazwa użytkownika, który wyszedł z chatu*/
-	private final UserId userId;
+	private final UserIdData userIdData;
 	/**Nazwa pokoju, w którym użytkownik się znajdował*/
 	private final String roomName;
 	
@@ -22,9 +22,9 @@ public class ClientLeftRoom extends ServerHandeledEvent implements Serializable
 	 * @param userName nazwa użytkownika
 	 * @param roomName nazwa pokoju
 	 */
-	public ClientLeftRoom(final UserId userID,final String roomName)
+	public ClientLeftRoom(final UserIdData userIDData,final String roomName)
 	{
-		this.userId=userID;
+		this.userIdData=userIDData;
 		this.roomName=roomName;
 	}
 	
@@ -33,9 +33,9 @@ public class ClientLeftRoom extends ServerHandeledEvent implements Serializable
 	 *
 	 * @return nazwa użytkownika
 	 */
-	public UserId getUserID() 
+	public UserIdData getUserID() 
 	{
-		return userId;
+		return userIdData;
 	}
 
 	/**

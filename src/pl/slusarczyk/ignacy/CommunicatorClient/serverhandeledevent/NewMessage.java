@@ -2,7 +2,7 @@ package pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent;
 
 import java.io.Serializable;
 
-import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
 /**
  * Klasa opisująca zdarzenie naciśnięcia przez użytkownika przycisku wysłania wiadomości
@@ -15,7 +15,7 @@ public class NewMessage extends ServerHandeledEvent implements Serializable
 	/**Nazwa pokoju*/
 	private final String roomName;
 	/**ID użytkownika*/
-	private final UserId userID;
+	private final UserIdData userIDData;
 	/**Wiadomość, którą użytkownik chce wysłać*/
 	private final String message;
 	
@@ -26,10 +26,10 @@ public class NewMessage extends ServerHandeledEvent implements Serializable
 	 * @param userID ID użytkownika
 	 * @param message wiadomość
 	 */
-	public NewMessage (final String roomName,final UserId userId,final String message)
+	public NewMessage (final String roomName,final UserIdData userIdData,final String message)
 	{
 		this.roomName = roomName;
-		this.userID = userId;
+		this.userIDData = userIdData;
 		this.message = message;
 	}
 	
@@ -48,9 +48,9 @@ public class NewMessage extends ServerHandeledEvent implements Serializable
 	 * 
 	 * @return nazwa użytkownika
 	 */
-	public UserId getUserId ()
+	public UserIdData getUserId ()
 	{
-		return userID;
+		return userIDData;
 	}
 	
 	/**

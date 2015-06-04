@@ -28,12 +28,12 @@ public class UserIdData implements Serializable
 			return false;
 		}
 		
-		if(!(other instanceof UserId))
+		if(!(other instanceof UserIdData))
 		{
 			return false;
 		}
 		
-		UserId otherUserId = (UserId) other;
+		UserIdData otherUserId = (UserIdData) other;
 		String otherUserName = otherUserId.getUserName();
 		return this.userNameToDisplay.equals(otherUserName);
 	}

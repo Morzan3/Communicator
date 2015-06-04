@@ -45,7 +45,7 @@ public class Model
 				return false;
 			}
 		}
-		Room room = new Room(createNewRoomInformation.getRoomName(), createNewRoomInformation.getUserId());
+		Room room = new Room(createNewRoomInformation.getRoomName(), new UserId(createNewRoomInformation.getUserId().getUserName()));
 		roomList.add(room);
 		return true;
 	}
@@ -62,7 +62,7 @@ public class Model
 		{
 			if (joinExistingRoominformation.getRoomName().equals(room.getRoomName()))
 			{
-				room.addUser(joinExistingRoominformation.getUserId());
+				room.addUser(new UserId(joinExistingRoominformation.getUserId().getUserName()));
 				return true;
 			}
 		}
@@ -84,7 +84,7 @@ public class Model
 			{
 				for (User user: room.getUserList())
 				{		
-					if (newMessageIfnormation.getUserId().equals(user.getUserID()))
+					if (new UserId(newMessageIfnormation.getUserId().getUserName()).equals(user.getUserID()))
 					{
 						user.addMessage(newMessageIfnormation,Calendar.getInstance().getTime());
 					}
@@ -137,7 +137,7 @@ public class Model
 			{
 				for (User user:room.getUserList())
 				{
-					if(user.getUserID().equals(clientLeftRoomInformation.getUserID()))
+					if(user.getUserID().equals(new UserId(clientLeftRoomInformation.getUserID().getUserName())))
 					{
 						user.setUserToInactive();
 					}

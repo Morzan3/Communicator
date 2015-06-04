@@ -2,7 +2,7 @@ package pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent;
 
 import java.io.Serializable;
 
-import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
 /**
  * Klasa reprezentująca zdarzenie naciśnięcia przez użytkownika przycisku utworzenia nowego pokoju
@@ -15,7 +15,7 @@ public class CreateNewRoom extends ServerHandeledEvent implements Serializable
 	/**Nazwa pokoju*/
 	private final String roomName;
 	/**Nazwa użytkownika*/
-	private final UserId userID;
+	private final UserIdData userIDData;
 
 	/**
 	 * Konstruktor tworzący zdarzenie na podstawie zadanych parametrów
@@ -23,10 +23,10 @@ public class CreateNewRoom extends ServerHandeledEvent implements Serializable
 	 * @param roomName nazwa pokoju
 	 * @param userID ID użytkownika
 	 */
-	public CreateNewRoom(final String roomName,final UserId userID)
+	public CreateNewRoom(final String roomName,final UserIdData userIDData)
 	{
 		this.roomName = roomName;
-		this.userID = userID;
+		this.userIDData = userIDData;
 	}
 	
 	/**
@@ -44,9 +44,9 @@ public class CreateNewRoom extends ServerHandeledEvent implements Serializable
 	 * 
 	 * @return nazwa użytkownika
 	 */
-	public UserId getUserId()
+	public UserIdData getUserId()
 	{
-		return userID;
+		return userIDData;
 	}
 }
 

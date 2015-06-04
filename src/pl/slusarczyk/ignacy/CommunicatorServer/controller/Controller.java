@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.*;
-import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
+import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.ClientLeftRoom;
+import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.CreateNewRoom;
+import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.JoinExistingRoom;
+import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.NewMessage;
+import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.ServerHandeledEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.InformationMessageServerEvent;
-import pl.slusarczyk.ignacy.CommunicatorServer.connection.*;
+import pl.slusarczyk.ignacy.CommunicatorServer.connection.MainConnectionHandler;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.Model;
+
 
 /**
  * Klasa kontrolera odpowiadajaca za odpowiednią komunikację pomiędzy klientem a serwerem, zawierająca w sobie klasy

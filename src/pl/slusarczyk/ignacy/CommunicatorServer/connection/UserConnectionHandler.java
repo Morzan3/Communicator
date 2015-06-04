@@ -71,33 +71,31 @@ public class UserConnectionHandler extends Thread
 					if (appEvent instanceof CreateNewRoom) 
 					{
 						CreateNewRoom createNewRoomInformation = (CreateNewRoom) appEvent;	
-						if (userOutputStreams.get(createNewRoomInformation.getUserId()) != null)
+						if (userOutputStreams.get(new UserId(createNewRoomInformation.getUserId().getUserName())) != null)
 						{
 							outputStream.writeObject(new InformationMessageServerEvent("Uzytkownik o podanej nazwie juz istnieje", createNewRoomInformation.getUserId()));				
 						}
 						else
 						{
-							userOutputStreams.put(createNewRoomInformation.getUserId(), outputStream);
+							userOutputStreams.put(new UserId(createNewRoomInformation.getUserId().getUserName()), outputStream);
 							eventQueue.add(appEvent);
 						}
 					}
 					else if(appEvent instanceof JoinExistingRoom)
 					{
 						JoinExistingRoom joinNewRoomInformation = (JoinExistingRoom) appEvent;	
-						if (userOutputStreams.get(joinNewRoomInformation.getUserId()) != null)
+						if (userOutputStreams.get(new UserId(joinNewRoomInformation.getUserId().getUserName())) != null)
 						{
 							outputStream.writeObject(new InformationMessageServerEvent("Uzytkownik o podanej nazwie juz istnieje", joinNewRoomInformation.getUserId()));			
 						}
 						else
 						{
-							userOutputStreams.put(joinNewRoomInformation.getUserId(), outputStream);
+							userOutputStreams.put(new UserId(joinNewRoomInformation.getUserId().getUserName()), outputStream);
 							eventQueue.add(appEvent);
 						}
 					}
 					else if(appEvent instanceof ClientLeftRoom)
 					{
-						ClientLeftRoom clientLeftRoomInformation = (ClientLeftRoom) appEvent;
-						userOutputStreams.remove(clientLeftRoomInformation.getUserID());
 						eventQueue.add(appEvent);
 						userSocket.close();
 						running = false;
@@ -109,7 +107,17 @@ public class UserConnectionHandler extends Thread
 				}
 				catch (IOException ex)
 				{
-					System.err.println(ex);
+				
+					try 
+					{
+						userSocket.close();
+					}
+					catch (IOException e) 
+					{
+					
+						
+					}
+					running = false;
 				}
 				catch (ClassNotFoundException ex)
 				{

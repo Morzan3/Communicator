@@ -2,7 +2,7 @@ package pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent;
 
 import java.io.Serializable;
 
-import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
 /**
  * Klasa reprezentująca zaakceptowanie przez serwer nowego połączenia, sygnalizująca możliwość otworzenia głównego okna chatu w aplikacji klienckiej
@@ -15,7 +15,7 @@ public class ConnectionEstablishedServerEvent extends ClientHandeledEvent implem
 	/**Invormacja o nawiązaniu połączenia*/
 	 private  final boolean isEstablished;
 	 /**UserId użytkownika*/
-	 private final UserId userID;
+	 private final UserIdData userIDData;
 	 /**Nazwa pokoju do którego został dołączony*/
 	 private final String roomName;
 	 
@@ -24,10 +24,10 @@ public class ConnectionEstablishedServerEvent extends ClientHandeledEvent implem
 	 * 
 	 * @param isEstablished czy połączenie przyjęte
 	 */
-	public ConnectionEstablishedServerEvent(final boolean isEstablished, final UserId userId, final String roomName)
+	public ConnectionEstablishedServerEvent(final boolean isEstablished, final UserIdData userIdData, final String roomName)
 	{
 		this.isEstablished = isEstablished;
-		this.userID = userId;
+		this.userIDData = userIdData;
 		this.roomName = roomName;
 	}
 	
@@ -46,9 +46,9 @@ public class ConnectionEstablishedServerEvent extends ClientHandeledEvent implem
 	 * 
 	 * @return
 	 */
-	public UserId getUserID()
+	public UserIdData getUserIDData()
 	{
-		return userID;
+		return userIDData;
 	}
 	
 	/**

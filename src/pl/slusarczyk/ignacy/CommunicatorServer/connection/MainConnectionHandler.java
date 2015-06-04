@@ -10,7 +10,7 @@ import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.ServerHandele
 import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.ConnectionEstablishedServerEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.ConversationInformationServerEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.InformationMessageServerEvent;
-import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.RoomData;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserData;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
@@ -76,9 +76,7 @@ public class MainConnectionHandler
 		try
 		{
 			ConversationInformationServerEvent userConversationToSend = new ConversationInformationServerEvent (roomData);
-			ObjectOutputStream userOutputStream;
-			userOutputStream = userOutputStreams.get(new UserId(userIdData.getUserName()));
-			userOutputStream.writeObject(userConversationToSend);
+			userOutputStreams.get(new UserId(userIdData.getUserName())).writeObject(userConversationToSend);
 		}
 		catch(IOException ex)
 		{
@@ -107,11 +105,11 @@ public class MainConnectionHandler
 	 * @param userId
 	 * @param connectionEstablished
 	 */
-	public void connectionEstablished(final UserId userId,final boolean connectionEstablished,final String roomName)
+	public void connectionEstablished(final UserIdData userIdData,final boolean connectionEstablished,final String roomName)
 	{
 		try 
 		{
-			userOutputStreams.get(userId).writeObject(new ConnectionEstablishedServerEvent(connectionEstablished,userId,roomName));
+			userOutputStreams.get(new UserId(userIdData.getUserName())).writeObject(new ConnectionEstablishedServerEvent(connectionEstablished,userIdData,roomName));
 		} 
 		catch (IOException e) 
 		{
@@ -123,8 +121,8 @@ public class MainConnectionHandler
 	{
 		try
 		{
-			userOutputStreams.get(informationMessageObject.getUserID()).writeObject(informationMessageObject);
-			userOutputStreams.remove(informationMessageObject.getUserID());
+			userOutputStreams.get(new UserId(informationMessageObject.getUserID().getUserName())).writeObject(informationMessageObject);
+			userOutputStreams.remove(new UserId(informationMessageObject.getUserID().getUserName()));
 		}
 		catch(IOException ex)
 		{
