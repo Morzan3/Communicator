@@ -13,6 +13,7 @@ import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.InformationMe
 import pl.slusarczyk.ignacy.CommunicatorServer.model.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.RoomData;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserData;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
 /**
  * Klasa główna serwera przechowująca informacje o strumieniach wyjściowych użytkowników i rozsyłająca wiadomości
@@ -70,13 +71,13 @@ public class MainConnectionHandler
 	 * @param usersConversation rozmowa pomiędzy użytkownikami
 	 * @param listOfUsers lista użytkowników aktualnie będących na chacie
 	 */
-	public void sendDirectMessage (final UserId userID,final RoomData roomData)
+	public void sendDirectMessage (final UserIdData userIdData,final RoomData roomData)
 	{
 		try
 		{
 			ConversationInformationServerEvent userConversationToSend = new ConversationInformationServerEvent (roomData);
 			ObjectOutputStream userOutputStream;
-			userOutputStream = userOutputStreams.get(userID);
+			userOutputStream = userOutputStreams.get(new UserId(userIdData.getUserName()));
 			userOutputStream.writeObject(userConversationToSend);
 		}
 		catch(IOException ex)
@@ -96,7 +97,7 @@ public class MainConnectionHandler
 		{
 			if(userData.isUserActive() == true)
 			{
-			sendDirectMessage(userData.getUserId(), roomData);
+				sendDirectMessage(userData.getUserIdData(), roomData);
 			}
 		}
 	}

@@ -10,6 +10,7 @@ import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.NewMessage;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.MessageData;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.RoomData;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserData;
+import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
 /**Klasa, która udostępnia cały interfejs moelu 
  * 
@@ -113,12 +114,13 @@ public class Model
 					{
 						messagesOfUser.add(new MessageData(message.getMessage(),message.getDate()));
 					}
-					UserData userData = new UserData(user.getUserID(), messagesOfUser, user.getUserStatus());
+					UserData userData = new UserData(new UserIdData(user.getUserID()), messagesOfUser, user.getUserStatus());
 					userSet.add(userData);
 				}
 				return new RoomData(userSet);
 			}
 		}
+		System.out.println("Zwracam nulla");
 		return null;
 	}
 	

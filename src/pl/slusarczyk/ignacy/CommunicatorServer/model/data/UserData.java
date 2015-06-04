@@ -3,7 +3,6 @@ package pl.slusarczyk.ignacy.CommunicatorServer.model.data;
 import java.io.Serializable;
 import java.util.HashSet;
 
-import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
 
 /**
  * Klasa opakowująca klasę User, wysyłana do klienta
@@ -14,15 +13,15 @@ public class UserData implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	/**Id użytkownika*/
-	private final UserId userId;
+	private final UserIdData userIdData;
 	/**Zbiór opakowanych wiadomości użytkownika*/
 	private final HashSet<MessageData> usersMessages;
 	/**Flaga określająca czy użytkownik jest aktywny*/
 	private final boolean isActive;
 	
-	public UserData(final UserId userId, final HashSet<MessageData> userMessages, final boolean isActive)
+	public UserData(final UserIdData userIdData, final HashSet<MessageData> userMessages, final boolean isActive)
 	{
-		this.userId = userId;
+		this.userIdData = userIdData;
 		this.usersMessages = userMessages;
 		this.isActive = isActive;
 	}
@@ -32,9 +31,9 @@ public class UserData implements Serializable
 	 * 
 	 * @return userId ID użytkownika
 	 */
-	public UserId getUserId() 
+	public UserIdData getUserIdData() 
 	{
-		return userId;
+		return userIdData;
 	}
 
 	/**

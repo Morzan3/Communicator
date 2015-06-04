@@ -49,8 +49,7 @@ public class UserId implements Serializable
 	}
 	
 	/**
-	 * Metoda zwracająca nazwę użytkownika z ID konieczna przy wyświetlaniu wiadomości w widoku ponieważ
-	 * bez niej nie da się ich zidentyfikować
+	 * Metoda zwracająca nazwę użytkownika z ID, potrzebna przy opakowywniu userId w UserIdData, nie udostępniana klientowi
 	 * 
 	 * @return user name
 	 */
