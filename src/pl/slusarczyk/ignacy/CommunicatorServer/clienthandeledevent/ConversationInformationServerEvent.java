@@ -28,7 +28,7 @@ public class ConversationInformationServerEvent extends ClientHandeledEvent impl
 	}
 
 	/**
-	 * Metoda zwracająca rozmowę użytkowników
+	 * Metoda zwracająca opakowane dane o pokoju
 	 * 
 	 * @return rozmowa użytkowników
 	 */

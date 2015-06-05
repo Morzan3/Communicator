@@ -1,7 +1,6 @@
 package pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent;
 
 import java.io.Serializable;
-
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
 /**
@@ -14,7 +13,7 @@ public class NewMessage extends ServerHandeledEvent implements Serializable
 	private static final long serialVersionUID = 1L;
 	/**Nazwa pokoju*/
 	private final String roomName;
-	/**ID użytkownika*/
+	/**Opakowana nazwa użytkownika*/
 	private final UserIdData userIDData;
 	/**Wiadomość, którą użytkownik chce wysłać*/
 	private final String message;
@@ -48,7 +47,7 @@ public class NewMessage extends ServerHandeledEvent implements Serializable
 	 * 
 	 * @return nazwa użytkownika
 	 */
-	public UserIdData getUserId ()
+	public UserIdData getUserIdData ()
 	{
 		return userIDData;
 	}

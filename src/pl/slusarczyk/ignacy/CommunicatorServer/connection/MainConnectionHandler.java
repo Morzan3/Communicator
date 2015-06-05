@@ -37,14 +37,14 @@ public class MainConnectionHandler
 	 * @param portNumber numer portu
 	 * @param eventQueue kolejka blokująca zdarzeń
 	 */
-	public MainConnectionHandler (final int portNumber, final BlockingQueue<ServerHandeledEvent> eventQueue)
+	public MainConnectionHandler (final int portNumber, final BlockingQueue<ServerHandeledEvent> eventQueueObject)
 	{
-		this.eventQueue = eventQueue;
+		this.eventQueue = eventQueueObject;
 		this.portNumber = portNumber;
 		this.userOutputStreams = new HashMap <UserId, ObjectOutputStream>();
 		
 		createServerSocket();
-		ServerSocketHandler serverSocketHandler = new ServerSocketHandler(serverSocket, this.eventQueue, userOutputStreams);
+		ServerSocketHandler serverSocketHandler = new ServerSocketHandler(serverSocket, eventQueue, userOutputStreams);
 		serverSocketHandler.start();
 	}
 	
@@ -87,13 +87,13 @@ public class MainConnectionHandler
 	/**
 	 * Metoda wysyłająca rozmowę do wszystkich użytkowników znajdujących się w tym samym pokoju
 	 * 
-	 * @param roomData Opakowany obiekt pokój, w którym znajduje się konwersacja do wyśweitlenia oraz lista użytkowników
+	 * @param roomData Opakowany obiekt pokój, w którym znajduje się konwersacja do wyświetlenia oraz lista użytkowników
 	 */
 	public void sendMessageToAll (final RoomData roomData)
 	{
 		for (UserData userData: roomData.getUserSet())
 		{
-			if(userData.isUserActive() == true)
+			if(userData.isUserActive())
 			{
 				sendDirectMessage(userData.getUserIdData(), roomData);
 			}
@@ -102,6 +102,7 @@ public class MainConnectionHandler
 	
 	/**
 	 * Metoda wysyłająca do klienta potwierdzenie poprawnego utworzenia lub dodania do pokoju
+	 * 
 	 * @param userId
 	 * @param connectionEstablished
 	 */
@@ -116,13 +117,18 @@ public class MainConnectionHandler
 			System.err.println(e);
 		}
 	}	
-		
+	
+	/**
+	 * Metoda służąca do wysłania wiadomości informacyjnej do użytkownika
+	 * 
+	 * @param informationMessageObject Obiekt zawierający w sobie wiadomość do wyświetlenia oraz nick użytkownika do którego wysyłamy wiadomość informacyjną
+	 */
 	public void sendInformationMessage(InformationMessageServerEvent informationMessageObject)
 	{
 		try
 		{
-			userOutputStreams.get(new UserId(informationMessageObject.getUserID().getUserName())).writeObject(informationMessageObject);
-			userOutputStreams.remove(new UserId(informationMessageObject.getUserID().getUserName()));
+			userOutputStreams.get(new UserId(informationMessageObject.getUserIDData().getUserName())).writeObject(informationMessageObject);
+			userOutputStreams.remove(new UserId(informationMessageObject.getUserIDData().getUserName()));
 		}
 		catch(IOException ex)
 		{

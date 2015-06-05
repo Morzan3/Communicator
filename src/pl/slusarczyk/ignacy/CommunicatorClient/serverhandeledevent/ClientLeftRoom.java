@@ -1,6 +1,5 @@
 package pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent;
 import java.io.Serializable;
-
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
 /**
@@ -33,7 +32,7 @@ public class ClientLeftRoom extends ServerHandeledEvent implements Serializable
 	 *
 	 * @return nazwa użytkownika
 	 */
-	public UserIdData getUserID() 
+	public UserIdData getUserIDData() 
 	{
 		return userIdData;
 	}

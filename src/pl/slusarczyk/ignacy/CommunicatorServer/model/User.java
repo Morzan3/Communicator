@@ -24,7 +24,7 @@ class User implements Serializable
 	
 	/**Konstruktor tworzący użytkownika o podanym imieniu
 	 * 
-	 * @param userName Nazwa użytkownika, którego tworzymy
+	 * @param userId Id użytkownika którego tworzymy
 	 */
 	public User (final UserId userId)
 	{
@@ -34,7 +34,7 @@ class User implements Serializable
 	}
 	
 	/**
-	 * Metoda zwracająca nazwę danego użytkownika
+	 * Metoda zwracająca ID użytkownika
 	 * 
 	 * @return userID
 	 */

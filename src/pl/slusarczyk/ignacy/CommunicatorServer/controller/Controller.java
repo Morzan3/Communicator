@@ -1,6 +1,5 @@
 package pl.slusarczyk.ignacy.CommunicatorServer.controller;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -14,7 +13,6 @@ import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.InformationMe
 import pl.slusarczyk.ignacy.CommunicatorServer.connection.MainConnectionHandler;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.Model;
 
-
 /**
  * Klasa kontrolera odpowiadajaca za odpowiednią komunikację pomiędzy klientem a serwerem, zawierająca w sobie klasy
  * odpowiadające strategiom obsługi zdarzeń pochodzących od klienta
@@ -23,7 +21,7 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.Model;
  */
 public class Controller 
 {
-	/**Kolejka blokująca do przesyłania zdarzeń pomiędzy widokiem a kontrolerem*/
+	/**Kolejka blokująca*/
 	private final BlockingQueue<ServerHandeledEvent> eventQueue;
 	/**Referencja do modelu*/
 	private final Model model;
@@ -34,6 +32,7 @@ public class Controller
 	
 	/**
 	 * Konstruktor tworzący controler na podstawie zadanych parametrów
+	 * 
 	 * @param eventQueue kolejka blokująca
 	 * @param model model
 	 * @param mainConnectionHandler serwer
@@ -88,7 +87,7 @@ public class Controller
 		}
 		
 		/**
-		 * Klasa wewnętrzna opisująca strategię obsługi żadania przez użytkownika utworzenia nowego pokoju
+		 * Klasa wewnętrzna opisująca strategię obsługi żądania przez użytkownika utworzenia nowego pokoju
 		 *
 		 * @author Ignacy Ślusarczyk
 		 */
@@ -97,19 +96,19 @@ public class Controller
 			void execute(final ServerHandeledEvent applicationEventObject)
 			{
 				CreateNewRoom createNewRoomInformation = (CreateNewRoom) applicationEventObject;
-				if (model.createNewRoom(createNewRoomInformation) == true)
+				if (model.createNewRoom(createNewRoomInformation))
 				{
-					mainConnectionHandler.connectionEstablished(createNewRoomInformation.getUserId(), true, createNewRoomInformation.getRoomName());
+					mainConnectionHandler.connectionEstablished(createNewRoomInformation.getUserIdData(), true, createNewRoomInformation.getRoomName());
 				}
 				else 
 				{
-					mainConnectionHandler.sendInformationMessage(new InformationMessageServerEvent("Pokoj o zadanej nazwie juz istnieje",createNewRoomInformation.getUserId()));
+					mainConnectionHandler.sendInformationMessage(new InformationMessageServerEvent("Pokoj o zadanej nazwie juz istnieje",createNewRoomInformation.getUserIdData()));
 				}
 			}
 		}
 		
 		/**
-		 * Klasa wewnętrzna opisująca strategię obsługi żadania przez użytkownika dołączenia do istniejącego pokoju
+		 * Klasa wewnętrzna opisująca strategię obsługi żądania przez użytkownika dołączenia do istniejącego pokoju
 		 *
 		 * @author Ignacy Ślusarczyk
 		 */
@@ -120,17 +119,17 @@ public class Controller
 				JoinExistingRoom joinExistingRoomInformation = (JoinExistingRoom) applicationEventObject;	
 				if(model.addUserToSpecificRoom(joinExistingRoomInformation) == true)
 				{
-					mainConnectionHandler.connectionEstablished(joinExistingRoomInformation.getUserId(), true,joinExistingRoomInformation.getRoomName());
+					mainConnectionHandler.connectionEstablished(joinExistingRoomInformation.getUserIdData(), true,joinExistingRoomInformation.getRoomName());
 				}
 				else 
 				{
-					mainConnectionHandler.sendInformationMessage(new InformationMessageServerEvent("Pokoj do ktorego chcesz dolaczyc nie istnieje",joinExistingRoomInformation.getUserId()));
+					mainConnectionHandler.sendInformationMessage(new InformationMessageServerEvent("Pokoj do ktorego chcesz dolaczyc nie istnieje",joinExistingRoomInformation.getUserIdData()));
 				}
 			}
 		}
 	
 		/**
-		 * Klasa wewnętrzna opisująca strategię wysłania przez użytkownika nowej wiadomości
+		 * Klasa wewnętrzna opisująca strategię obsługi wysłania przez użytkownika nowej wiadomości
 		 * 
 		 * @author Ignacy Ślusarczyk
 		 */

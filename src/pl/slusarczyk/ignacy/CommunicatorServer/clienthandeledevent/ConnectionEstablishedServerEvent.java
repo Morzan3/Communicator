@@ -14,7 +14,7 @@ public class ConnectionEstablishedServerEvent extends ClientHandeledEvent implem
 	 private static final long serialVersionUID = 1L;
 	/**Invormacja o nawiązaniu połączenia*/
 	 private  final boolean isEstablished;
-	 /**UserId użytkownika*/
+	 /**Opakowana nazwa użytkownika*/
 	 private final UserIdData userIDData;
 	 /**Nazwa pokoju do którego został dołączony*/
 	 private final String roomName;

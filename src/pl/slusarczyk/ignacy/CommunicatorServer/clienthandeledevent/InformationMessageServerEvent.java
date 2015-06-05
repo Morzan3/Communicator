@@ -4,11 +4,17 @@ import java.io.Serializable;
 
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
+/**
+ * Klasa służąca do wysyłania informacji do wyświetlenia u użytkownika np do informowania, iż dany nick jest już zajęty.
+ * 
+ * @author Ignacy Ślusarczyk
+ */
 public class InformationMessageServerEvent extends ClientHandeledEvent implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	
+	/**Wiadomość, która ma zostać wyświetlona u użytkownika*/
 	private final String message;
+	/**Opakowana nazwa użytkownika, u którego dana wiadomość ma zostać wyświetlona*/
 	private final UserIdData userIDData;
 	
 	public InformationMessageServerEvent(final String message, final UserIdData userIDData)
@@ -32,7 +38,7 @@ public class InformationMessageServerEvent extends ClientHandeledEvent implement
 	 * 
 	 * @return the userID
 	 */
-	public UserIdData getUserID()
+	public UserIdData getUserIDData()
 	{
 		return userIDData;
 	}

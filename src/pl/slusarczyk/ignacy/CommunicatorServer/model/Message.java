@@ -17,7 +17,7 @@ class Message implements Comparable<Message>,  Serializable
 	private final Date createdOn;
 
 	/**
-	 * Konstruktor tworzoący wiadomość na podstawie jej treści oraz znacznika czasowego
+	 * Konstruktor tworzący wiadomość na podstawie jej treści oraz znacznika czasowego
 	 * 
 	 * @param message Treść wiadomości
 	 * @param timestamp Znacznik czasowy

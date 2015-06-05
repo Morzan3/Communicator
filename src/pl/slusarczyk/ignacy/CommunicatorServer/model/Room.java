@@ -25,8 +25,7 @@ class Room implements Serializable
 	{
 		this.roomName = roomName;
 		listOfUsers = new HashSet<User>();
-		User firstUser = new User(userId);
-		listOfUsers.add(firstUser);
+		listOfUsers.add(new User(userId));
 	}
 	
 	/**

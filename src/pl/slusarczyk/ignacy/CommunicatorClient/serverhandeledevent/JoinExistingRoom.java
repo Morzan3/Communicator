@@ -14,7 +14,7 @@ public class JoinExistingRoom extends ServerHandeledEvent implements Serializabl
 	private static final long serialVersionUID = 1L;
 	/**Nazwa pokoju*/
 	private final String roomName;
-	/**Nazwa użytkownika*/
+	/**Opakowana nazwa użytkownika*/
 	private final UserIdData userIDData;
 
 	/**
@@ -40,11 +40,11 @@ public class JoinExistingRoom extends ServerHandeledEvent implements Serializabl
 	}
 
 	/**
-	 * Metoda zwracająca ID użytkownika
+	 * Metoda zwracająca opakowaną nazwę użytkownika
 	 * 
 	 * @return nazwa użytkownika
 	 */
-	public UserIdData getUserId()
+	public UserIdData getUserIdData()
 	{
 		return userIDData;
 	}

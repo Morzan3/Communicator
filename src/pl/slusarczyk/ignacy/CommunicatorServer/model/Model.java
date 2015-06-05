@@ -12,7 +12,7 @@ import pl.slusarczyk.ignacy.CommunicatorServer.model.data.RoomData;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserData;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.data.UserIdData;
 
-/**Klasa, która udostępnia cały interfejs moelu 
+/**Klasa, która udostępnia cały interfejs modelu 
  * 
  * @author Ignacy Ślusarczyk
  *
@@ -33,36 +33,34 @@ public class Model
 	/** 
 	 * Metoda tworząca nowy pokój oraz dodająca pierwszego użytkownika, który ten pokój utworzył
 	 * 
-	 * @param roomName Nazwa pokoju który zakładamy
-	 * @param nameOfFirstUser Nazwa użytkownika, który zakłada pokój 
+	 * @param createNewRoomInformation opakowane informacje potrzebne do założenia nowego pokoju
 	 */
 	public boolean createNewRoom(final CreateNewRoom createNewRoomInformation)
 	{
 		for(Room room : roomList)
 		{
-			if (room.getRoomName().equals(createNewRoomInformation.getRoomName()) == true)
+			if (room.getRoomName().equals(createNewRoomInformation.getRoomName()))
 			{
 				return false;
 			}
 		}
-		Room room = new Room(createNewRoomInformation.getRoomName(), new UserId(createNewRoomInformation.getUserId().getUserName()));
-		roomList.add(room);
+	
+		roomList.add(new Room(createNewRoomInformation.getRoomName(), new UserId(createNewRoomInformation.getUserIdData().getUserName())));
 		return true;
 	}
 
 	/**
 	 * Metoda dodająca użytkownika o zadanym nicku do pokoju o zadanej nazwie 
 	 * 
-	 * @param roomName Nazwa pokoju, do której dodajemy użytkownika
-	 * @param userToAddName Nick użytkownika, którego dodajemy
+	 * @param joinExistingRoomInformation opakowane informacje potrzebne do dołączenia użytkownika do danego pokoju
 	 */
-	public boolean addUserToSpecificRoom (final JoinExistingRoom joinExistingRoominformation)
+	public boolean addUserToSpecificRoom (final JoinExistingRoom joinExistingRoomInformation)
 	{
 		for (Room room : roomList)
 		{
-			if (joinExistingRoominformation.getRoomName().equals(room.getRoomName()))
+			if (joinExistingRoomInformation.getRoomName().equals(room.getRoomName()))
 			{
-				room.addUser(new UserId(joinExistingRoominformation.getUserId().getUserName()));
+				room.addUser(new UserId(joinExistingRoomInformation.getUserIdData().getUserName()));
 				return true;
 			}
 		}
@@ -72,21 +70,19 @@ public class Model
 	/**
 	 * Metoda odpowiedzialna za dodanie wiadomości od użytkownika do jego historii wiadomości
 	 * 
-	 * @param roomName Nazwa pokoju, w którym użytkownik odbywa rozmowę
-	 * @param nameOfSender Nazwa użytkownika, do którego historii mamy dodać daną wiadomość
-	 * @param message Wiadomość do dodania.
+	 * @param neMessageInformation opakowane informacje potrzebne do dodania nowej wiaodmości użytownika
 	 */
-	public void addMessageOfUser (final NewMessage newMessageIfnormation)
+	public void addMessageOfUser (final NewMessage newMessageInformation)
 	{
 		for (Room room : roomList)
 		{
-			if (newMessageIfnormation.getRoomName().equals(room.getRoomName()))
+			if (newMessageInformation.getRoomName().equals(room.getRoomName()))
 			{
 				for (User user: room.getUserList())
 				{		
-					if (new UserId(newMessageIfnormation.getUserId().getUserName()).equals(user.getUserID()))
+					if (new UserId(newMessageInformation.getUserIdData().getUserName()).equals(user.getUserID()))
 					{
-						user.addMessage(newMessageIfnormation,Calendar.getInstance().getTime());
+						user.addMessage(newMessageInformation, Calendar.getInstance().getTime());
 					}
 				}
 			}
@@ -94,10 +90,11 @@ public class Model
 	}
 	
 	/**
-	 * Metoda opakowująca dane z pokoju o zadanej nazwie w obiekt typu RoomData
+	 * Metoda opakowująca dane pokoju, do którego przyszła nowa wiadomość 
 	 * 
-	 * @param roomName Nazwa pokoju, z którego chcemy pobrać listę użytkowników
-	 * @return Obiekt typu String, który zawiera wszystkich użytkowników pokoju, gotowy do wyświetlenia u klienta
+	 * @param newMessageInformation opakowana wiadomość wysłana do pokoju, z którego dane chcemy pobrać
+	 * 
+	 * @return opakowane informacje o pokoju
 	 */
 	public RoomData getRoomDataFromRoom (final NewMessage newMessageInformationObject)
 	{
@@ -120,14 +117,13 @@ public class Model
 				return new RoomData(userSet);
 			}
 		}
-		System.out.println("Zwracam nulla");
 		return null;
 	}
 	
 	/**
 	 * Metoda oznaczająca danego użytkownika jako nieaktywnego
 	 * 
-	 * @param clientLeftRoomInformation informacje o użytkowniku, którego trzeba oznaczyć
+	 * @param clientLeftRoomInformation informacje o użytkowniku, który wyszedł z chatu
 	 */
 	public void setUserToInactive (ClientLeftRoom clientLeftRoomInformation)
 	{
@@ -137,7 +133,7 @@ public class Model
 			{
 				for (User user:room.getUserList())
 				{
-					if(user.getUserID().equals(new UserId(clientLeftRoomInformation.getUserID().getUserName())))
+					if(user.getUserID().equals(new UserId(clientLeftRoomInformation.getUserIDData().getUserName())))
 					{
 						user.setUserToInactive();
 					}

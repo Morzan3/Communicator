@@ -26,6 +26,7 @@ class ServerSocketHandler extends Thread
 	
 	/**
 	 * Konstruktor tworzący wątek nasłuchujący nowych połączeń
+	 * 
 	 * @param serverSocket socket serwera
 	 * @param eventQueue kolejka zdarzeń
 	 * @param userOutputStreams mapa strumieni wyjściowych użytkowników

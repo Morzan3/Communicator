@@ -3,7 +3,7 @@ package pl.slusarczyk.ignacy.CommunicatorServer.model;
 import java.io.Serializable;
 
 /**
- * Klasa opakowująca nazwę użytkownika impelmentująca metody equals oraz hashCode, stanowiąca sposób identyfikacji przynależności obiektów
+ * Klasa opakowująca nazwę użytkownika impelmentująca metody equals oraz hashCode.
  * 
  * @author Ignacy Ślusarczyk
  */
@@ -14,7 +14,7 @@ public class UserId implements Serializable
 	private final String userName;
 	
 	/**
-	 * Konstruktor tworzący obiekt na podstawei zadanego parametru
+	 * Konstruktor tworzący obiekt na podstawie zadanego parametru
 	 * 
 	 * @param userName Nazwa użytownika
 	 */
@@ -38,7 +38,7 @@ public class UserId implements Serializable
 		
 		UserId otherUserId = (UserId) other;
 		String otherUserName = otherUserId.getUserName();
-		return this.userName.equals(otherUserName);
+		return userName.equals(otherUserName);
 	}
 	
 	

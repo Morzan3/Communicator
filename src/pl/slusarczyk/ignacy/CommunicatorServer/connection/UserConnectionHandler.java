@@ -11,7 +11,7 @@ import pl.slusarczyk.ignacy.CommunicatorClient.serverhandeledevent.*;
 import pl.slusarczyk.ignacy.CommunicatorServer.clienthandeledevent.InformationMessageServerEvent;
 import pl.slusarczyk.ignacy.CommunicatorServer.model.UserId;
 
-/** Klasa odpowiedzialna za odbieranie zdarzeń od klienta i dodawanie ich do blocking queue 
+/** Klasa odpowiedzialna za odbieranie zdarzeń od klienta i dodawanie ich do kolejki
  * 
  * @author Ignacy Ślusatczyk
  */
@@ -68,32 +68,40 @@ public class UserConnectionHandler extends Thread
 				{
 					appEvent = (ServerHandeledEvent) inputStream.readObject();
 			
+					/**W przypadku kiedy od klienta przychodzi żądanie dołączenia do pokoju lub jego utworzenia musimy zapisać jego strumień wyjściowy*/
 					if (appEvent instanceof CreateNewRoom) 
 					{
 						CreateNewRoom createNewRoomInformation = (CreateNewRoom) appEvent;	
-						if (userOutputStreams.get(new UserId(createNewRoomInformation.getUserId().getUserName())) != null)
+						
+						/** Przed dodaniem do mapy musimy sprawdzić czy dany użytkownik już nie istnieje*/
+						if (userOutputStreams.get(new UserId(createNewRoomInformation.getUserIdData().getUserName())) != null)
 						{
-							outputStream.writeObject(new InformationMessageServerEvent("Uzytkownik o podanej nazwie juz istnieje", createNewRoomInformation.getUserId()));				
+							outputStream.writeObject(new InformationMessageServerEvent("Uzytkownik o podanej nazwie juz istnieje", createNewRoomInformation.getUserIdData()));				
 						}
+						/**Jeśli nie istnieje dodajemy go do mapy*/
 						else
 						{
-							userOutputStreams.put(new UserId(createNewRoomInformation.getUserId().getUserName()), outputStream);
+							userOutputStreams.put(new UserId(createNewRoomInformation.getUserIdData().getUserName()), outputStream);
 							eventQueue.add(appEvent);
 						}
 					}
 					else if(appEvent instanceof JoinExistingRoom)
 					{
 						JoinExistingRoom joinNewRoomInformation = (JoinExistingRoom) appEvent;	
-						if (userOutputStreams.get(new UserId(joinNewRoomInformation.getUserId().getUserName())) != null)
+						
+						/** Przed dodaniem do mapy musimy sprawdzić czy dany użytkownik już nie istnieje*/
+						if (userOutputStreams.get(new UserId(joinNewRoomInformation.getUserIdData().getUserName())) != null)
 						{
-							outputStream.writeObject(new InformationMessageServerEvent("Uzytkownik o podanej nazwie juz istnieje", joinNewRoomInformation.getUserId()));			
+							outputStream.writeObject(new InformationMessageServerEvent("Uzytkownik o podanej nazwie juz istnieje", joinNewRoomInformation.getUserIdData()));			
 						}
 						else
 						{
-							userOutputStreams.put(new UserId(joinNewRoomInformation.getUserId().getUserName()), outputStream);
+							/**Jeśli nie istnieje dodajemy go do mapy*/
+							userOutputStreams.put(new UserId(joinNewRoomInformation.getUserIdData().getUserName()), outputStream);
 							eventQueue.add(appEvent);
 						}
 					}
+					/**Jesli dostaniemy obiekt reprezentujący wyjście człowieka z chatu musimy zatrzymać wątek i przekazać zdarzenie do kontrolera*/
 					else if(appEvent instanceof ClientLeftRoom)
 					{
 						eventQueue.add(appEvent);
@@ -107,29 +115,27 @@ public class UserConnectionHandler extends Thread
 				}
 				catch (IOException ex)
 				{
-				
 					try 
 					{
 						userSocket.close();
+						running = false;
 					}
 					catch (IOException e) 
 					{
-					
-						
+						System.err.println(e);
 					}
-					running = false;
 				}
 				catch (ClassNotFoundException ex)
 				{
 					System.err.println("Błąd rzutowania przychodzącej informacji" + ex);
 				}
-				catch (NullPointerException ex3)
+				catch (NullPointerException ex)
 				{
-					System.err.println("Błąd odbierania obiektu");
+					System.err.println("Błąd odbierania obiektu" + ex);
 				}
-				catch(ClassCastException ex4)
+				catch(ClassCastException ex)
 				{
-					System.err.println("Tutaj" + ex4);
+					System.err.println(ex);
 				}
 			}
 		}
