@@ -15,7 +15,8 @@ $ git clone https://github.com/Morzan3/CommunicatorServer
 We run the app as normal java application
 
 ```
-$ java CommunicatorServer.java
+$ java /src/pl/slusarczyk/ignacy/CommunicatorServer/CommunicatorServer.java
+
 ```
 
 Server will start listening on port 5000
